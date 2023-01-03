@@ -144,9 +144,9 @@ public:
 
     const_reverse_iterator rbegin() const { return (const_reverse_iterator(_arr + _size - 1)); }
 
-    reverse_iterator rend() { return (reverse_iterator(_arr)); }
+    reverse_iterator rend() { return (reverse_iterator(_arr - 1)); }
 
-    const_reverse_iterator rend() const { return (const_reverse_iterator(_arr)); }
+    const_reverse_iterator rend() const { return (const_reverse_iterator(_arr - 1)); }
 
 // CAPACITY
 
@@ -161,21 +161,41 @@ public:
             return ;
         if (new_cap > max_size())
             throw std::length_error("Error: New capacity is greater than the container's limit");
+        T* newArray = _allocator.allocate(new_cap);
+        for (size_t i = 0; i < _size; i++) {
+            _allocator.construct(newArray + i, _arr[i]);
+            _allocator.destroy(_arr + i);
+        }
+        _allocator.deallocate(_arr, _capacity);
         _capacity = new_cap;
+        _arr = newArray;
     }
 
     size_type capacity() const { return (_capacity); }
 
 // MODIFIERS
 
-    // void clear() { 
-    //     for (size_t i = 0; i < _size)
-    //     _size = 0;
-    // }
+    void clear() { 
+        for (size_t i = 0; i < _size; i++)
+            _allocator.destroy(_arr + i);
+        _size = 0;
+    }
 
-    // iterator insert( const_iterator pos, const T& value ) {
+    iterator insert( const_iterator pos, const T& value ) {
+        size_type i = static_cast<size_type>(std::distance(begin(), pos));
+        insert(pos, 1, value);
+        return (iterator(_arr + i));
+    }
 
-    // }
+    iterator insert( const_iterator pos, size_type count, const T& value ) {
+        difference_type oldEndPos = this->end() - this->begin();
+        difference_type position = pos - this->begin();
+        iterator oldEndIt;
+        iterator endIt;
+
+        resize(_size + count);
+        oldEndIt = this->begin() + oldEnd
+    }
 
     // iterator erase( iterator pos ) { }
 
