@@ -104,7 +104,7 @@ public:
 
     reference at( size_type pos ) {
         if (!(pos < size()))
-            throw std::out_of_range("Error: pos is out of range.");
+            throw std::out_of_range("Error: pos is out of range");
         return (_arr[pos]);
     }
 
@@ -136,9 +136,10 @@ public:
 
     const_iterator begin() const { return (const_iterator(_arr)); }
 
-    iterator end() { return (iterator(*_arr + _size)); }
+    // iterator end() { return (iterator(_arr + _size)); }
+    iterator end() { return (iterator(_arr + _size - 1)); }
 
-    const_iterator end() const { return (const_iterator(*_arr + _size)); }
+    const_iterator end() const { return (const_iterator(_arr + _size)); }
 
     reverse_iterator rbegin() { return (reverse_iterator(_arr + _size - 1)); }
 
@@ -187,27 +188,95 @@ public:
         return (iterator(_arr + i));
     }
 
-    iterator insert( const_iterator pos, size_type count, const T& value ) {
-        difference_type oldEndPos = this->end() - this->begin();
-        difference_type position = pos - this->begin();
-        iterator oldEndIt;
-        iterator endIt;
-
-        resize(_size + count);
-        oldEndIt = this->begin() + oldEnd
+    void insert( const_iterator pos, size_type count, const T& value ) {
+        if (count == 0)
+            return ;
+        
+        vector<T, Allocator> tmp(pos + 1, end());
+        _size += count;
+        iterator it = tmp.begin();
+        iterator ite = tmp.end();
+        erase(_arr[pos + 1], end());
+        for (size_type i = 0; i < pos + count; i++)
+            push_back(value);
+        for (; it != ite; it++)
+            push_back(*it);
     }
 
-    // iterator erase( iterator pos ) { }
+    template <class InputIterator>
+    void insert (iterator pos, InputIterator first, InputIterator last) {
+        vector<T, Allocator> tmp(pos + 1, end());
+        size_type count = static_cast<size_type>(std::distance(first, last));
+        _size += count;
+        if (count == 0)
+            return ;
+        iterator it = tmp.begin();
+        iterator ite = tmp.end();
+        erase(_arr[pos + 1], end());
+        for (; first != last; first++)
+            push_back(*first);
+        for (; it != ite; it++)
+            push_back(*it);
+    }
 
-    // iterator erase( iterator first, iterator last ) { }
+    iterator erase( iterator pos ) {
+        vector<T, Allocator> tmp(pos + 1, end());
+        iterator it = tmp.begin();
+        iterator ite = tmp.end();
 
-    // void push_back( const T& value ) { }
+        for (size_type i = 0; i < tmp.size(); i++)
+            pop_back();
+        for (; it != ite; it++)
+            push_back(*it);
+        return (pos);
+    }
 
-    // void pop_back() { }
+    iterator erase( iterator first, iterator last ) {
+        if (first == last)
+            return (last);
+        
+        vector<T, Allocator> tmp1(first + 1, end());
+        vector<T, Allocator> tmp2(last, end());
+        iterator it = tmp2.begin();
+        iterator ite = tmp2.end();
 
-    // void resize( size_type count ) { }
+        for (size_type i; i < tmp2.size(); i++)
+            pop_back();
+        for (; it != ite; it++)
+            push_back(*it);
+        return (first);
+    }
 
-    // void resize( size_type count, T value = T() ) { }
+    void push_back( const T& value ) {
+        int newCapacity;
+        if (size() == capacity() && capacity() > 0)
+            newCapacity = capacity() * 2;
+        else
+            newCapacity = 1;
+        reserve(newCapacity);
+        _allocator.construct(_arr + _size, value);
+        _size++;
+    }
+
+    void pop_back() {
+        _allocator.destroy(_arr + _size - 1);
+        _size--;
+    }
+
+    void resize( size_type count, T value = T() ) { 
+        if (count > max_size())
+            throw std::length_error("Error: New capacity is greater than the container's limit");
+        if (count <= size()) {
+            for (size_type i = count; i < size(); i++)
+                _allocator.destroy(_arr + i);
+        }
+        else {
+            reserve(count);
+            for (size_type i = size(); i < count; i++)
+                push_back(value);
+        }
+        _size = count;
+    }
 
     void swap( vector & other ) {
         vector swapArr;
@@ -230,12 +299,12 @@ public:
 
     friend bool operator==( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        return (equal(lhs.begin(), lhs.end(), rhs.begin()));
+        return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
 
     friend bool operator!=( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        return (equal(lhs.begin(), lhs.end(), rhs.begin()) == false);
+        return (!(lhs == rhs));
     }
 
     friend bool operator<( const vector<T,Allocator>& lhs,
@@ -243,20 +312,20 @@ public:
         return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
     }
 
-    // friend bool operator<=( const std::vector<T,Alloc>& lhs,
-    //                 const std::vector<T,Alloc>& rhs ) {
-        
-    // }
+    friend bool operator<=( const vector<T,Allocator>& lhs,
+                    const vector<T,Allocator>& rhs ) {
+        return (!(rhs < lhs));
+    }
 
-    // friend bool operator>( const std::vector<T,Alloc>& lhs,
-    //             const std::vector<T,Alloc>& rhs ) {
+    friend bool operator>( const vector<T,Allocator>& lhs,
+                const vector<T,Allocator>& rhs ) {
+        return (lhs > rhs);
+    }
 
-    // }
-
-    // friend bool operator>=( const std::vector<T,Alloc>& lhs,
-    //              const std::vector<T,Alloc>& rhs ) {
-                
-    // }
+    friend bool operator>=( const vector<T,Allocator>& lhs,
+                 const vector<T,Allocator>& rhs ) {
+        return (!(lhs < rhs));
+    }
 
     friend void swap( vector<T,Allocator>& lhs, vector<T,Allocator>& rhs ) { 
         vector swapArr;

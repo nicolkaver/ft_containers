@@ -114,8 +114,6 @@ private:
 
   };
 
-};
-
 } //namespace ft
 
 #endif

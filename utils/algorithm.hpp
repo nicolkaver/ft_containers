@@ -3,6 +3,7 @@
 
 # include <iostream>
 
+namespace ft {
 template <class InputIterator1, class InputIterator2>
 bool equal ( InputIterator1 first1, InputIterator1 last1, InputIterator2 first2 )
 {
@@ -30,5 +31,7 @@ bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1,
     }
     return (first2 != last2);
 }
+
+} // namespace ft
 
 #endif
