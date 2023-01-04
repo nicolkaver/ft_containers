@@ -136,8 +136,7 @@ public:
 
     const_iterator begin() const { return (const_iterator(_arr)); }
 
-    // iterator end() { return (iterator(_arr + _size)); }
-    iterator end() { return (iterator(_arr + _size - 1)); }
+    iterator end() { return (iterator(_arr + _size)); }
 
     const_iterator end() const { return (const_iterator(_arr + _size)); }
 
@@ -182,42 +181,48 @@ public:
         _size = 0;
     }
 
-    iterator insert( const_iterator pos, const T& value ) {
+    iterator insert( iterator pos, const T& value ) {
         size_type i = static_cast<size_type>(std::distance(begin(), pos));
         insert(pos, 1, value);
         return (iterator(_arr + i));
     }
 
-    void insert( const_iterator pos, size_type count, const T& value ) {
+    void insert( iterator pos, size_type count, const T& value ) {
         if (count == 0)
             return ;
-        
+
         vector<T, Allocator> tmp(pos + 1, end());
         _size += count;
         iterator it = tmp.begin();
         iterator ite = tmp.end();
-        erase(_arr[pos + 1], end());
-        for (size_type i = 0; i < pos + count; i++)
+        erase(it, end());
+        for (size_type i = 0; i < *pos + count; i++)
             push_back(value);
         for (; it != ite; it++)
             push_back(*it);
+        it = begin();
+        ite = end();
+        for(; it != ite; it++)
+            std::cout << *it << std::endl;
+        std::cout << "stop" << std::endl;
     }
 
-    template <class InputIterator>
-    void insert (iterator pos, InputIterator first, InputIterator last) {
-        vector<T, Allocator> tmp(pos + 1, end());
-        size_type count = static_cast<size_type>(std::distance(first, last));
-        _size += count;
-        if (count == 0)
-            return ;
-        iterator it = tmp.begin();
-        iterator ite = tmp.end();
-        erase(_arr[pos + 1], end());
-        for (; first != last; first++)
-            push_back(*first);
-        for (; it != ite; it++)
-            push_back(*it);
-    }
+    // template <class InputIt>
+    // void insert (iterator pos, InputIt first, InputIt last) {
+    //     vector<T, Allocator> tmp(pos + 1, end());
+    //     // size_type count = static_cast<size_type>(std::distance(first, last));
+    //     difference_type count = last - first;
+    //     _size += count;
+    //     if (count == 0)
+    //         return ;
+    //     iterator it = tmp.begin();
+    //     iterator ite = tmp.end();
+    //     erase(it, end());
+    //     for (; first != last; first++)
+    //         push_back(*first);
+    //     for (; it != ite; it++)
+    //         push_back(*it);
+    // }
 
     iterator erase( iterator pos ) {
         vector<T, Allocator> tmp(pos + 1, end());
