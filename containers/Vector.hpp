@@ -30,7 +30,7 @@ public:
     typedef ft::ReverseIterator<const T> const_reverse_iterator;
 
     vector(void): _arr(NULL), _size(0), _capacity(0) {};
-    explicit vector (const allocator_type& alloc): _arr(NULL), _size(0), _capacity(0), _allocator(alloc) {};
+    explicit vector (const allocator_type& alloc): _arr(NULL), _size(0), _capacity(0), _allocator(alloc) {}
     explicit vector(size_type n, const value_type& value = value_type(),
                     const allocator_type& alloc = allocator_type())
         : _arr(NULL), _size(0), _capacity(0), _allocator(alloc) {
