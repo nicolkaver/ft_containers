@@ -173,6 +173,21 @@ public:
 
     size_type capacity() const { return (_capacity); }
 
+    void resize( size_type count, T value = T() ) {
+        if (count > max_size())
+            throw std::length_error("Error: New capacity is greater than the container's limit");
+        if (count <= size()) {
+            for (size_type i = count; i < size(); i++)
+                _allocator.destroy(_arr + i);
+        }
+        else {
+            reserve(count);
+            for (size_type i = size(); i < count; i++) {
+                push_back(value);
+            }
+        }
+    }
+
 // MODIFIERS
 
     void clear() { 
@@ -187,49 +202,45 @@ public:
         return (iterator(_arr + i));
     }
 
-    void insert( iterator pos, size_type count, const T& value ) {
+    void insert( iterator pos, size_type count, const T& value ) { //OK?
         if (count == 0)
             return ;
 
-        vector<T, Allocator> tmp(pos + 1, end());
-        _size += count;
+        vector<T, Allocator> tmp(pos, end());
+        iterator it = tmp.begin();
+        iterator ite = tmp.end();
+        erase(pos, end());
+        for (size_type i = 0; i < count; i++)
+            push_back(value);
+        for (; it != ite; it++) {
+            push_back(*it);
+        }
+    }
+
+    template <class InputIt>
+    void insert (iterator pos, InputIt first, InputIt last,
+                typename ft::enable_if<!ft::is_integral<InputIt>::value,
+                                     InputIt>::type* = NULL) {
+        vector<T, Allocator> tmp(pos, end());
+        // size_type count = static_cast<size_type>(std::distance(first, last));
+        difference_type count = last - first;
+        if (count == 0)
+            return ;
         iterator it = tmp.begin();
         iterator ite = tmp.end();
         erase(it, end());
-        for (size_type i = 0; i < *pos + count; i++)
-            push_back(value);
+        for (; first != last; first++)
+            push_back(*first);
         for (; it != ite; it++)
             push_back(*it);
-        it = begin();
-        ite = end();
-        for(; it != ite; it++)
-            std::cout << *it << std::endl;
-        std::cout << "stop" << std::endl;
     }
 
-    // template <class InputIt>
-    // void insert (iterator pos, InputIt first, InputIt last) {
-    //     vector<T, Allocator> tmp(pos + 1, end());
-    //     // size_type count = static_cast<size_type>(std::distance(first, last));
-    //     difference_type count = last - first;
-    //     _size += count;
-    //     if (count == 0)
-    //         return ;
-    //     iterator it = tmp.begin();
-    //     iterator ite = tmp.end();
-    //     erase(it, end());
-    //     for (; first != last; first++)
-    //         push_back(*first);
-    //     for (; it != ite; it++)
-    //         push_back(*it);
-    // }
-
-    iterator erase( iterator pos ) {
+    iterator erase( iterator pos ) { //OK
         vector<T, Allocator> tmp(pos + 1, end());
         iterator it = tmp.begin();
         iterator ite = tmp.end();
 
-        for (size_type i = 0; i < tmp.size(); i++)
+        for (size_type i = 0; i <= tmp.size(); i++)
             pop_back();
         for (; it != ite; it++)
             push_back(*it);
@@ -245,7 +256,7 @@ public:
         iterator it = tmp2.begin();
         iterator ite = tmp2.end();
 
-        for (size_type i; i < tmp2.size(); i++)
+        for (size_type i = 0; i <= tmp1.size(); i++)
             pop_back();
         for (; it != ite; it++)
             push_back(*it);
@@ -268,38 +279,21 @@ public:
         _size--;
     }
 
-    void resize( size_type count, T value = T() ) { 
-        if (count > max_size())
-            throw std::length_error("Error: New capacity is greater than the container's limit");
-        if (count <= size()) {
-            for (size_type i = count; i < size(); i++)
-                _allocator.destroy(_arr + i);
-        }
-        else {
-            reserve(count);
-            for (size_type i = size(); i < count; i++)
-                push_back(value);
-        }
-        _size = count;
-    }
-
     void swap( vector & other ) {
-        vector swapArr;
-
-        swapArr._arr = this->_arr;
-        swapArr._size = this->_size;
-        swapArr._capacity = this->_capacity;
-        swapArr._allocator = this->_allocator;
+        pointer tmpArr = _arr;
+        size_type tmpSize = _size;
+        size_type tmpCapacity = _capacity;
+        allocator_type tmpAlloc = _allocator;
 
         this->_arr = other._arr;
         this->_size = other._size;
         this->_capacity = other._capacity;
         this->_allocator = other._allocator;
 
-        other._allocator = swapArr._allocator;
-        other._size = swapArr._size;
-        other._capacity = swapArr._capacity;
-        other._allocator = swapArr._allocator;
+        other._arr = tmpArr;
+        other._size = tmpSize;
+        other._capacity = tmpCapacity;
+        other._allocator = tmpAlloc;
     }
 
     friend bool operator==( const vector<T,Allocator>& lhs,
@@ -332,23 +326,22 @@ public:
         return (!(lhs < rhs));
     }
 
-    friend void swap( vector<T,Allocator>& lhs, vector<T,Allocator>& rhs ) { 
-        vector swapArr;
+    friend void swap( vector<T, Allocator> & lhs, vector<T, Allocator> & rhs ) { 
+        lhs.swap(rhs);
+        // pointer tmpArr = lhs._arr;
+        // size_type tmpSize = lhs._size;
+        // size_type tmpCapacity = lhs._capacity;
+        // allocator_type tmpAlloc = lhs._allocator;
 
-        swapArr._arr = lhs._arr;
-        swapArr._size = lhs._size;
-        swapArr._capacity = lhs._capacity;
-        swapArr._allocator = lhs._allocator;
+        // lhs._arr = rhs._arr;
+        // lhs._size = rhs._size;
+        // lhs._capacity = rhs._capacity;
+        // lhs._allocator = rhs._allocator;
 
-        lhs._arr = rhs._arr;
-        lhs._size = rhs._size;
-        lhs._capacity = rhs._capacity;
-        lhs._allocator = rhs._allocator;
-
-        rhs._allocator = swapArr._allocator;
-        rhs._size = swapArr._size;
-        rhs._capacity = swapArr._capacity;
-        rhs._allocator = swapArr._allocator;
+        // rhs._allocator = tmpArr;
+        // rhs._size = tmpSize;
+        // rhs._capacity = tmpCapacity;
+        // rhs._allocator = tmpAlloc;
     }
 
 private:
