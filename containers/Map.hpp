@@ -61,7 +61,13 @@ public:
 
     reverse_iterator rbegin() { return (iterator(_rbtree + _size - 1)); }
     
+    const_reverse_iterator rbegin() const { return (iterator(_rbtree + _size - 1)); }
 
+    reverse_iterator rend() { return (iterator(_rbtree - 1)); }
+
+    const_reverse_iterator rend() const { return (iterator(_rbtree - 1)); }
+
+    
 
 private:
     size_type _size;
