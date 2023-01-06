@@ -19,10 +19,10 @@ public:
     typedef allocator_type::pointer pointer;
     typedef allocator_type::const_pointer;
 
-    typedef ft::RandomAccessIterator<T> iterator;
-    typedef ft::RandomAccessIterator<const T> const_iterator;
-    typedef ft::ReverseIterator<T> reverse_iterator;
-    typedef ft::ReverseIterator<const T> const_reverse_iterator;
+    typedef ft::RBTreeIterator<T> iterator;
+    typedef ft::RBTreeIterator<const T> const_iterator;
+    typedef ft::RBTreeReverseIterator<T> reverse_iterator;
+    typedef ft::RBTreeReverseIterator<const T> const_reverse_iterator;
 
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
@@ -35,7 +35,25 @@ public:
     map (InputIt first, InputIt last, const key_compare& comp = key_compare(), 
             const allocator_type& alloc = allocator_type(),
             typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
-        : _size(0)
+        : _size(0), _compare(comp), _allocator(alloc), 
+
+    map (const map& src) { *this = src; }
+
+    ~map() {}
+
+    map & operator=(const map & rhs) {
+        _size = rhs._size;
+        _compare = rhs._compare;
+        _allocator = rhs._allocator;
+        _treeAllocator = rhs._treeAllocator;
+        _rbtree = rhs._rbtree;
+        return (*this);
+    }
+
+//ITERATORS
+    iterator begin() { return (); }
+    
+
 
 private:
     size_type _size;

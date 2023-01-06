@@ -7,7 +7,6 @@ namespace ft {
 
 template <class Iter>
 struct iterator_traits {
-public:
     typedef typename Iter::difference_type difference_type;
     typedef typename Iter::value_type value_type;
     typedef typename Iter::pointer pointer;
@@ -17,7 +16,7 @@ public:
 
 template <class T>
 struct iterator_traits<T*> {
-public:
+pub
     typedef ptrdiff_t difference_type;
     typedef T value_type;
     typedef value_type& pointer;
