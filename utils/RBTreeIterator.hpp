@@ -44,7 +44,7 @@ public:
     const_pointer operator->() const { return _ptr; }
 
     RBTreeIterator operator++() {
-        _ptr = getPredecessor(_ptr);
+        _ptr = getSuccessor(_ptr);
         return *this;
     }
 
@@ -55,7 +55,7 @@ public:
     }
 
     RBTreeIterator operator--() {
-        _ptr = getSuccessor(_ptr);
+        _ptr = getPredecessor(_ptr);
         return *this;
     }
 
