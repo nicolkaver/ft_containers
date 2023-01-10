@@ -156,7 +156,7 @@ public:
 
     size_type max_size() const { return (std::numeric_limits<difference_type>::max()); }
 
-    void reserve( size_type new_cap ) {
+    void reserve( size_type new_cap ) { 
         if (new_cap <= capacity())
             return ;
         if (new_cap > max_size())
