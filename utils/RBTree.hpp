@@ -446,6 +446,22 @@ private:
         }
     }
 
+// MIN AND MAX
+
+Node* getMin(Node* node) {
+    while (node && node->left && node->left != _dummyRoot)
+        node = node->left;
+    return (node);
+}
+
+Node* getMax(Node* node) {
+    while (node && node->right)
+        node = node->right;
+    return (node);
+}
+
+Node* getRoot { return (_root); }
+
 private:
     Node* _root;
     Node* _superRoot;
