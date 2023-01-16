@@ -22,7 +22,7 @@ class RBTree {
 public:
     typedef Node<T> Node;
     typedef T value_type;
-    typedef typename value_type::first_type key_type;
+    typedef typename value_type::first_type key_value;
 
     typedef ft::RBTreeIterator<T, Node> iterator;
     typedef ft::RBTreeIterator<const T, const Node> const_iterator;
@@ -33,19 +33,44 @@ public:
     typedef typename allocator_type::template rebind<Node>::other node_allocator; //custom memory allocator; will allocate Node
     typedef Compare key_compare;
     
-    RBtree(): _root(NULL), _superRoot(NULL), _dummyRoot(NULL), _comp(key_compare()), _allocator(allocator_type()),
+    RBTree(): _root(NULL), _endNode(NULL), _bottomNode(NULL), _comp(key_compare()), _allocator(allocator_type()),
                 _nodeAllocator(node_allocator()) {
-        _superRoot = _nodeAllocator.allocate(1);
-        _nodeAllocator.construct(_superRoot, Node(value_type()));
-        _dummyRoot = _nodeAllocator.allocate(1);
-        _nodeAllocator.construct(_dummyRoot, Node(value_type()));
+        _endNode = _nodeAllocator.allocate(1);
+        _nodeAllocator.construct(_endNode, Node(value_type()));
+        _bottomNode = _nodeAllocator.allocate(1);
+        _nodeAllocator.construct(_bottomNode, Node(value_type()));
     }
 
-    RBTree(RBTree const & src):_root(NULL), _superRoot(NULL), _dummyRoot(NULL) { *this = src; }
+    RBTree(RBTree const & src):_root(NULL), _endNode(NULL), _bottomNode(NULL) { *this = src; }
     
-    ~RBTree() { //clear}
+    ~RBTree() {
+        clear();
+        clearRoots();
+    }
 
-    RBTree & operator=(RBTree const & rhs) { //continue}
+    RBTree & operator=(RBTree const & rhs) {
+        if (this != &rhs) {
+            clear();
+            clearRoots();
+
+            _allocator = rhs._allocator;
+            _comp = rhs._comp;
+            _nodeAllocator = rhs._nodeAllocator;
+            _endNode = _nodeAllocator.allocate(1);
+            _nodeAllocator.construct(_endNode, Node(value_type()));
+            _bottomNode = _nodeAllocator.allocate(1);
+            _nodeAllocator.construct(_bottomNode, Node(value_type()));
+            _root = clone(rhs._root, NULL, rhs._bottomNode);
+            if (_root) {
+                _root->parent = _endNode;
+                _endNode->left = _root;
+                Node *minNode = getMin(_root);
+                _bottomNode->parent = minNode;
+                minNode->left = _bottomNode;
+            }
+            return (*this);
+        }
+    }
 
 
 // RELATIVE NODES
@@ -108,12 +133,13 @@ private:
             node->parent->right = ptr_left;
         else
             node->parent->left = ptr_left;
-        ptr_left_right = node;
+        ptr_left->right = node;
         node->parent = ptr_left;
     }
 
 // REPLACE
 
+public:
     void replace(Node* n1, Node* n2) {
         if (n1 == NULL)
             _root = n2;
@@ -127,6 +153,94 @@ private:
 
 // ITERATORS
 
+public: 
+iterator lower_bound(key_value const & key) {
+    Node* tmp = _root;
+    Node* ret = _endNode;
+    while (tmp && tmp != _bottomNode) {
+        if (key <= tmp->data.first) {
+            ret = tmp;
+            tmp = tmp->left;
+        }
+        else
+            tmp = tmp->right;
+    }
+    return (iterator(ret));
+}
+
+const_iterator lower_bound(key_value const & key) const {
+    Node* tmp = _root;
+    Node* ret = _endNode;
+    while (tmp && tmp != _bottomNode) {
+        if (key <= tmp->data.first) {
+            ret = tmp;
+            tmp = tmp->left;
+        }
+        else
+            tmp = tmp->right;
+    }
+    return (const_iterator(ret));
+}
+
+iterator upper_bound(key_value const & key) { // A VERIFIER !!!
+    Node* tmp = _root;
+    Node* ret = _endNode;
+    while (tmp) {
+        if (key < tmp->data.first) {
+            ret = tmp;
+            tmp = tmp->left;
+        }
+        else
+            tmp = tmp->right;
+    }
+    return (iterator(ret));
+}
+
+const_iterator upper_bound(key_value const & key) const { // A VERIFIER !!!
+    Node* tmp = _root;
+    Node* ret = _endNode;
+    while (tmp) {
+        if (key < tmp->data.first) {
+            ret = tmp;
+            tmp = tmp->left;
+        }
+        else
+            tmp = tmp->right;
+    }
+    return (const_iterator(ret));
+}
+
+iterator begin() { return (iterator(getBegin())); }
+
+const_iterator begin() const { return (const_iterator(getBegin())); }
+
+iterator end() { return (iterator(_endNode)); }
+
+const_iterator end() const { return (const_iterator(_endNode)); }
+
+reverse_iterator rbegin() { //continue
+    if (_root == NULL)
+        return (reverse_iterator(_bottomNode));
+    else {
+        reverse_iterator it = _endNode;
+        it++;
+        return (it);
+    }
+}
+
+const_reverse_iterator rbegin() const { //continue
+    if (_root == NULL)
+        return (cosnt_reverse_iterator(_bottomNode));
+    else {
+        const_reverse_iterator it = _endNode;
+        it++;
+        return (it);
+    }
+}
+
+reverse_iterator rend() { return (reverse_iterator(_bottomNode())); }
+
+//const_reverse_iterator rend() { return (const_reverse_iterator(_bottomNode())); }
 
 // CLEAR
 
@@ -138,7 +252,7 @@ public:
 
 private:
     void clear2(Node* node) {
-        if (node == NULL || node == _dummyRoot)
+        if (node == NULL || node == _bottomNode)
             return ;
         else {
             clear2(node->right);
@@ -149,18 +263,18 @@ private:
     }
 
     void    clearRoots() {
-        if (_superRoot) {
-            _nodeAllocator.destroy(_superRoot);
-            _nodeAllocator.deallocate(_superRoot, 1);
+        if (_endNode) {
+            _nodeAllocator.destroy(_endNode);
+            _nodeAllocator.deallocate(_endNode, 1);
         }
-        if (_dummyRoot)
-            _nodeAllocator.destroy(_dummyRoot);
-            _nodeAllocator.destroy(_dummyRoot, 1);
+        if (_bottomNode)
+            _nodeAllocator.destroy(_bottomNode);
+            _nodeAllocator.destroy(_bottomNode, 1);
     }
 
 // SEARCH FUNCTIONS
 public :
-    iterator search(key_type & const key) {
+    iterator search(key_value const & key) {
         Node* ret = searchHelper(_root, key);
         if (ret)
             return (iterator(ret));
@@ -168,7 +282,7 @@ public :
             return (end());
     }
 
-    iterator search(key_type const & key) const {
+    iterator search(key_value const & key) const {
         Node* ret = searchHelper(_root, key);
         if (ret)
             return (iterator(ret));
@@ -176,23 +290,23 @@ public :
             return (end());
     }
 
-    Node* searchHelper(Node* root, key_type const & key) {
-        if (root = NULL || root == _dummyRoot)
+    Node* searchHelper(Node* root, key_value const & key) {
+        if (root == NULL || root == _bottomNode)
             return (NULL);
         if (root->data.first == key)
             return (root);
-        if (key < root.data)
+        if (key < root->data)
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));
     }
 
-    Node* searchHelper(Node* root, key_type const & key) const {
-        if (root = NULL || root == _dummyRoot)
+    Node* searchHelper(Node* root, key_value const & key) const {
+        if (root == NULL || root == _bottomNode)
             return (NULL);
         if (root->data.first == key)
             return (root);
-        if (key < root.data)
+        if (key < root->data)
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));
@@ -201,13 +315,13 @@ public :
 // INSERT FUNCTIONS
 
 public:
-    iterator insert(value_type const & data) {
+    iterator insertNode(value_type const & data) {
         if (_root != NULL) {
             _root->parent = NULL;
-            _dummyRoot->parent->left = NULL;
-            _dummyRoot->parent = NULL;
+            _bottomNode->parent->left = NULL;
+            _bottomNode->parent = NULL;
         }
-        _superRoot->left = NULL;
+        _endNode->left = NULL;
         Node* newNode = _nodeAllocator.allocate(1);
         _nodeAllocator.construct(newNode, Node(data));
         //we verify whether the root exists
@@ -216,6 +330,7 @@ public:
             _root = newNode;
         else {
             Node* tmp = this->_root;
+            while (1) {
             if (data.first == tmp->data.first)
                 tmp->data.second = data.second;
             else if (data < tmp->data) {
@@ -234,14 +349,15 @@ public:
                 else
                     tmp = tmp->right;
             }
+            }
             newNode->parent = tmp;
         }
         insert_case1(newNode);
-        _root->parent = _superRoot;
-        _superRoot->left = _root;
-        Node *smallestNode = getMinimum(_root);
-        smallestNode->left = _dummyRoot;
-        _dummyRoot->parent = smallestNode;
+        _root->parent = _endNode;
+        _endNode->left = _root;
+        Node *smallestNode = getMin(_root);
+        smallestNode->left = _bottomNode;
+        _bottomNode->parent = smallestNode;
         return search(data.first);
     }
 
@@ -280,7 +396,7 @@ private:
                 node = node->left;
         }
         else if (node == node->parent->left
-                    && node->parent == getGrandparent(node)->right)
+                    && node->parent == getGrandparent(node)->right) {
             rotateRight(node->parent);
             node = node->right;
         }
@@ -299,16 +415,26 @@ private:
 
 // CLONE
 
+Node* clone(Node* curr, Node* parent, Node* bottom) {
+    if (curr == NULL || curr == bottom)
+        return (NULL);
+    Node* node = _nodeAllocator.allocate(1);
+    _nodeAllocator.construct(node, Node(curr->data));
+    node->left = clone(node->left, node, bottom);
+    node->right = clone(node->right, node, bottom);
+    return (node);
+}
+
 // DELETIONS
 //https://codingdiksha.com/cpp-program-implement-red-black-tree/
 
 public:
-    void delete(key_type const & key) {
+    void deleteNode(key_value const & key) {
         if (_root) {
             _root->parent = NULL;
-            _superRoot->left = NULL;
-            _dummyRoot->parent->left = NULL;
-            _dummyRoot->parent = NULL;
+            _endNode->left = NULL;
+            _bottomNode->parent->left = NULL;
+            _bottomNode->parent = NULL;
         }
         Node* child;
         Node* node = searchHelper(_root, key);
@@ -330,7 +456,7 @@ public:
         _nodeAllocator.allocate(1);
         _nodeAllocator.construct(node, Node(pred->data));
         //now we connect the copy to the predecessor
-        if (tmp->parent) {
+        if (tmpParent) {
             node->parent = tmpParent;
             if (isLeft)
                 tmpParent->left = node;
@@ -357,11 +483,11 @@ public:
         _nodeAllocator.destroy(node);
         _nodeAllocator.deallocate(node, 1);
         if (_root) {
-            _root->parent = _superRoot;
-            _superRoot->left = _root;
-            Node *minNode = getMinimum(_root);
-            _dummyRoot->parent = minNode;
-            minNode->left = _dummyRoot;
+            _root->parent = _endNode;
+            _endNode->left = _root;
+            Node *minNode = getMin(_root);
+            _bottomNode->parent = minNode;
+            minNode->left = _bottomNode;
         }
     }
 
@@ -389,7 +515,7 @@ private:
         if (node->parent->color == BLACK && getSibling(node)
             && getSibling(node)->color == BLACK
             && (getSibling(node)->left == NULL || getSibling(node)->left->color == BLACK)
-            && (getSibling(node)->right == NULL || getSibling(node)->right->color == BLACK) {
+            && (getSibling(node)->right == NULL || getSibling(node)->right->color == BLACK)) {
             getSibling(node)->color = RED;
             delete_case1(node->parent);
         }
@@ -401,7 +527,7 @@ private:
         if (node->parent->color == RED && getSibling(node)
             && getSibling(node)->color == BLACK
             && (getSibling(node)->left == NULL || getSibling(node)->left->color == BLACK) 
-            && (getSibling(node->right == NULL ||getSibling(node)->right->color == BLACK)) {
+            && (getSibling(node)->right == NULL ||getSibling(node)->right->color == BLACK)) {
             getSibling(node)->color = RED;
             node->parent->color = BLACK;
         }
@@ -449,7 +575,7 @@ private:
 // MIN AND MAX
 
 Node* getMin(Node* node) {
-    while (node && node->left && node->left != _dummyRoot)
+    while (node && node->left && node->left != _bottomNode)
         node = node->left;
     return (node);
 }
@@ -460,12 +586,30 @@ Node* getMax(Node* node) {
     return (node);
 }
 
-Node* getRoot { return (_root); }
+Node* getRoot() { return (_root); }
+
+Node* getBegin() {
+    if (_root == NULL)
+        return (_endNode);
+    Node* node = _root;
+    while (node && node->left != NULL && node->left != _bottomNode)
+        node = node->left;
+    return (node);
+}
+
+Node* getBegin() const {
+    if (_root == NULL)
+        return (_endNode);
+    Node* node = _root;
+    while (node && node->left != NULL && node->left != _bottomNode)
+        node = node->left;
+    return (node);
+}
 
 private:
     Node* _root;
-    Node* _superRoot;
-    Node* _dummyRoot;
+    Node* _endNode;
+    Node* _bottomNode;
     key_compare _comp;
     allocator_type _allocator;
     node_allocator _nodeAllocator;

@@ -4,12 +4,11 @@
 # include <iostream>
 # include "Node.hpp"
 
-
 namespace ft {
 template<typename T, typename U>
 class RBTreeIterator {
 public:
-    typedef typename bidirectional_iterator_tag iterator_category;
+    typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
     typedef T value_type;
@@ -19,7 +18,7 @@ public:
     typedef U Node;
 
     RBTreeIterator(): _ptr(NULL) {}
-    RBTreeIterator(ptr): _ptr(ptr) {}
+    RBTreeIterator(Node* ptr): _ptr(ptr) {}
     RBTreeIterator(RBTreeIterator const & src) { *this = src; }
     ~RBTreeIterator() {}
 
@@ -40,8 +39,8 @@ public:
     reference operator*() { return *_ptr; }
     pointer operator->() { return _ptr; }
 
-    const_reference operator*() const { return *_ptr; }
-    const_pointer operator->() const { return _ptr; }
+    // const_reference operator*() const { return *_ptr; }
+    // const_pointer operator->() const { return _ptr; }
 
     RBTreeIterator operator++() {
         _ptr = getSuccessor(_ptr);
