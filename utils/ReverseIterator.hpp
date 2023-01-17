@@ -13,7 +13,7 @@ public:
     typedef T* pointer;
     typedef const T* const_pointer;
     typedef T& reference;
-    typedef const T& const_reference;*
+    typedef const T& const_reference;
 
     ReverseIterator() : _ptr(NULL){};
     ReverseIterator(pointer ptr) : _ptr(ptr){};

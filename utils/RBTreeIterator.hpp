@@ -29,11 +29,11 @@ public:
 
     friend bool operator==(const RBTreeIterator& lhs,
                         const RBTreeIterator& rhs) {
-        return lhs._ptr == rhs._ptr;
+        return (lhs._ptr == rhs._ptr);
     }
     friend bool operator!=(const RBTreeIterator& lhs,
                         const RBTreeIterator& rhs) {
-        return lhs._ptr != rhs._ptr;
+        return (lhs._ptr != rhs._ptr);
     }
 
     reference operator*() { return *_ptr; }
