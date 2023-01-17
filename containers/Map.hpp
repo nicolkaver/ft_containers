@@ -10,6 +10,7 @@
 # include "../utils/RBTreeReverseIterator.hpp"
 # include "../utils/TypeTraits.hpp"
 # include "../utils/algorithm.hpp"
+# include "../utils/IteratorTraits.hpp"
 
 namespace ft {
 template<typename Key, typename T, class Compare = std::less<Key>,
@@ -18,7 +19,7 @@ class map {
 public:
     typedef Key key_value;
     typedef T mapped_type;
-    typedef pair<const Key, T> value_type;
+    typedef ft::pair<const Key, T> value_type;
     typedef Compare key_compare;
     
     class value_compare {
@@ -28,7 +29,7 @@ public:
         value_compare (Compare c) : comp(c) {}
     public:
         bool operator() (const value_type& x, const value_type& y) const {
-        return comp(x.first, y.first);
+            return comp(x.first, y.first);
         }
     };
 
@@ -50,30 +51,32 @@ public:
                                     allocator_type>::const_reverse_iterator const_reverse_iterator;
 
     typedef std::size_t size_type;
-    typedef std::ptrdiff_t difference_type;
+    typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
+
+    //typedef std::ptrdiff_t difference_type;
 
 // CONSTRUCTORS
-    map(): _size(0), _compare(key_compare()), _allocator(allocator_type()),
-            _treeAllocator(treeAllocator()), _rbtree(NULL) {
-        _rbtree = _treeAllocator.allocate(1);
-        _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
-    }
+    // map(): _size(0), _compare(key_compare()), _allocator(allocator_type()),
+    //         _treeAllocator(treeAllocator()), _rbtree(NULL) {
+    //     _rbtree = _treeAllocator.allocate(1);
+    //     _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
+    // }
 
-    explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+    explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
     : _size(0), _compare(comp), _allocator(alloc), _treeAllocator(treeAllocator()), _rbtree(NULL) {
         _rbtree = _treeAllocator.allocate(1);
         _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
     }
 
     template <class InputIt>  
-    map (InputIt first, InputIt last, const key_compare& comp = key_compare(), 
+    map(InputIt first, InputIt last, const key_compare& comp = key_compare(), 
             const allocator_type& alloc = allocator_type(),
             typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
         : _size(0), _compare(comp), _allocator(alloc), _treeAllocator(treeAllocator()), _rbtree(NULL) {
-            _rbtree = _treeAllocator.allocate(1);
-            _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
-            insert(first, last);
-        }
+        _rbtree = _treeAllocator.allocate(1);
+        _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
+        insert(first, last);
+    }
 
     map (const map& src): _size(0), _compare(src._comp), _allocator(src._allocator),
                         _treeAllocator(treeAllocator()), _rbtree(NULL) { *this = src; }
@@ -245,7 +248,7 @@ public:
     mapped_type& operator[] (const key_value& k) {
         iterator ret = _rbtree->search(k);
         if (ret == end())
-            return ((*insert(ft::make_pair(k, mapped_type())).first).second);
+            return ((*(insert(ft::make_pair(k, mapped_type())).first)).second);
         return ((*ret).second);
     }
 

@@ -17,7 +17,13 @@ struct pair {
     template<class U, class V>
     pair (const pair<U,V>& pr): first(pr.first), second(pr.second) {}
 
+    pair(const pair & pr): first(pr.first), second(pr.second) {}
+
+    pair (first_type& a, second_type& b): first(a), second(b) {}
+
     pair (const first_type& a, const second_type& b): first(a), second(b) {}
+
+    ~pair() {}
 
     pair& operator=( const pair& other ) {
 
@@ -50,7 +56,7 @@ bool operator<( const pair<T1,T2>& lhs, const pair<T1,T2>& rhs ) {
         return false;
     else if (lhs.second < rhs.second)
         return true;
-    return false;    
+    return false;
 }
 
 template< class T1, class T2 >

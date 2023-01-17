@@ -68,8 +68,8 @@ public:
                 _bottomNode->parent = minNode;
                 minNode->left = _bottomNode;
             }
-            return (*this);
         }
+        return (*this);
     }
 
 
@@ -80,7 +80,7 @@ private:
             return (NULL);
         if (node == node->parent->left)
             return (node->parent->right);
-        if (node == node->parent->right)
+        else
             return (node->parent->left);
     }
 
@@ -269,7 +269,7 @@ private:
         }
         if (_bottomNode)
             _nodeAllocator.destroy(_bottomNode);
-            _nodeAllocator.destroy(_bottomNode, 1);
+            _nodeAllocator.deallocate(_bottomNode, 1);
     }
 
 // SEARCH FUNCTIONS
@@ -295,7 +295,7 @@ public :
             return (NULL);
         if (root->data.first == key)
             return (root);
-        if (key < root->data)
+        if (key < root->data.first)
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));

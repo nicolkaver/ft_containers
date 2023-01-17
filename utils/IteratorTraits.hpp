@@ -16,7 +16,7 @@ struct iterator_traits {
 
 template <class T>
 struct iterator_traits<T*> {
-pub
+public:
     typedef ptrdiff_t difference_type;
     typedef T value_type;
     typedef value_type& pointer;

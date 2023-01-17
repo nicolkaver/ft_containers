@@ -36,8 +36,26 @@ public:
         return (lhs._ptr != rhs._ptr);
     }
 
-    reference operator*() { return *_ptr; }
-    pointer operator->() { return _ptr; }
+    friend bool operator>(const RBTreeIterator& lhs,
+                        const RBTreeIterator& rhs) {
+        return lhs._ptr > rhs._ptr;
+    }
+    friend bool operator>=(const RBTreeIterator& lhs,
+                         const RBTreeIterator& rhs) {
+        return lhs._ptr >= rhs._ptr;
+    }
+    friend bool operator<(const RBTreeIterator& lhs,
+                        const RBTreeIterator& rhs) {
+        return lhs._ptr < rhs._ptr;
+    }
+    friend bool operator<=(const RBTreeIterator& lhs,
+                        const RBTreeIterator& rhs) {
+        return lhs._ptr <= rhs._ptr;
+    }
+
+    reference operator*() { return (_ptr->data); }
+
+    pointer operator->() { return (&(_ptr->data)); }
 
     // const_reference operator*() const { return *_ptr; }
     // const_pointer operator->() const { return _ptr; }

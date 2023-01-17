@@ -18,7 +18,7 @@ public:
 
     RBTreeReverseIterator() : _ptr(NULL){};
     RBTreeReverseIterator(Node* ptr) : _ptr(ptr) {};
-    RBTreeReverseIterator(RBTreeIterator const & src): _ptr(src._ptr) {}
+    RBTreeReverseIterator(RBTreeReverseIterator const & src): _ptr(src._ptr) {}
     ~RBTreeReverseIterator() {}
 
     RBTreeReverseIterator & operator=(RBTreeReverseIterator const & rhs) {
@@ -37,11 +37,11 @@ public:
         return (lhs._ptr != rhs._ptr);
     }
 
-    reference operator*() { return _ptr->data; }
+    reference operator*() { return (_ptr->data); }
 
-    pointer operator->() { return &(_ptr->data); }
+    pointer operator->() { return (&(_ptr->data)); }
 
-    RBTreeIterator operator++() {
+    RBTreeReverseIterator operator++() {
         _ptr = getPredecessor(_ptr);
         return *this;
     }
