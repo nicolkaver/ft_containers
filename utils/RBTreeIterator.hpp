@@ -3,6 +3,9 @@
 
 # include <iostream>
 # include "Node.hpp"
+# include "Pair.hpp"
+# include "TypeTraits.hpp"
+# include "RBTree.hpp"
 
 namespace ft {
 template<typename T, typename U>
@@ -40,14 +43,17 @@ public:
                         const RBTreeIterator& rhs) {
         return lhs._ptr > rhs._ptr;
     }
+
     friend bool operator>=(const RBTreeIterator& lhs,
                          const RBTreeIterator& rhs) {
         return lhs._ptr >= rhs._ptr;
     }
+
     friend bool operator<(const RBTreeIterator& lhs,
                         const RBTreeIterator& rhs) {
         return lhs._ptr < rhs._ptr;
     }
+
     friend bool operator<=(const RBTreeIterator& lhs,
                         const RBTreeIterator& rhs) {
         return lhs._ptr <= rhs._ptr;
@@ -100,8 +106,10 @@ public:
         Node* parent = node->parent;
         if (node->right)
             return (getMinValue(node->right));
-        while (node->data > parent->data)
-                parent = parent->parent;
+        while (parent && node == parent->right) {
+            node = parent;
+            parent = parent->parent;
+        }
         return (parent);
     }
 
@@ -111,8 +119,10 @@ public:
         Node* parent = node->parent;
         if (node->left)
             return (getMaxValue(node->left));
-        while (node->data < parent->data)
-            parent = parent->parent;        
+        while (parent && node == parent->left) {
+            node = parent;
+            parent = parent->parent;
+        }
         return (parent);
     }
 

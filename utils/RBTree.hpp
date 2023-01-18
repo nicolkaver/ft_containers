@@ -4,6 +4,9 @@
 # include <iostream>
 # include "Node.hpp"
 # include "RBTreeIterator.hpp"
+# include "RBTreeReverseIterator.hpp"
+# include "TypeTraits.hpp"
+# include "Pair.hpp"
 
 # define RED 1
 # define BLACK 0
@@ -295,7 +298,7 @@ public :
             return (NULL);
         if (root->data.first == key)
             return (root);
-        if (key < root->data.first)
+        if (root->data.first && key < root->data.first) //
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));
@@ -306,7 +309,7 @@ public :
             return (NULL);
         if (root->data.first == key)
             return (root);
-        if (key < root->data)
+        if (root->data.first && key < root->data.first) //
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));

@@ -2,6 +2,9 @@
 # define RBTREE_REVERSE_ITERATOR
 
 # include <iostream>
+# include "Node.hpp"
+# include "Pair.hpp"
+# include "TypeTraits.hpp"
 
 namespace ft {
 template<typename T, typename U>
