@@ -217,11 +217,11 @@ public:
     }
 
     ft::pair<const_iterator,const_iterator> equal_range (const key_value& k) const {
-        return (ft::make_pair(lower_bound(k), upper_bounf(k)));
+        return (ft::make_pair(lower_bound(k), upper_bound(k)));
     }
     
     ft::pair<iterator,iterator> equal_range (const key_value& k) {
-        return (ft::make_pair(lower_bound(k), upper_bounf(k)));
+        return (ft::make_pair(lower_bound(k), upper_bound(k)));
     }
 
     iterator lower_bound (const key_value& k) { return (_rbtree->lower_bound(k)); }

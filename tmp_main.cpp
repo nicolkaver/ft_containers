@@ -1,5 +1,5 @@
-#include "containers/Map.hpp"
-#include "containers/Vector.hpp"
+#include "containers/map.hpp"
+#include "containers/vector.hpp"
 
 #include <map>
 #include <vector>
@@ -97,21 +97,21 @@ void test_map()
     
     struct timeval diff, startTV, endTV;
     
-    std::map<int, int> map;
-    std::cout << "STD: " << std::flush;
-    gettimeofday(&startTV, NULL);
+    // std::map<int, int> map;
+    // std::cout << "STD: " << std::flush;
+    // gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 10000000; ++i) {
-        map[i] = i;
-    }
-    for (int i = 0; i < 10000000; ++i) {
-        map.erase(i);
-    }
+    // for (int i = 0; i < 10000000; ++i) {
+    //     map[i] = i;
+    // }
+    // for (int i = 0; i < 10000000; ++i) {
+    //     map.erase(i);
+    // }
     
-    gettimeofday(&endTV, NULL);
-    timersub(&endTV, &startTV, &diff);
+    // gettimeofday(&endTV, NULL);
+    // timersub(&endTV, &startTV, &diff);
     
-    std::cout << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    // std::cout << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
     
     ft::map<int, int> map2;
     std::cout << "FT: " << std::flush;
@@ -174,8 +174,8 @@ void test_map_random()
 
 int main()
 {
-    test_vector_no_reserve();
-    test_vector_reserve();
+    // test_vector_no_reserve();
+    // test_vector_reserve();
     test_map();
     test_map_random();
     
