@@ -6,6 +6,7 @@
 # include "RBTreeIterator.hpp"
 # include "RBTreeReverseIterator.hpp"
 # include "TypeTraits.hpp"
+# include "IteratorTraits.hpp"
 # include "Pair.hpp"
 
 # define RED 1
@@ -44,7 +45,7 @@ public:
         _nodeAllocator.construct(_bottomNode, Node(value_type()));
     }
 
-    RBTree(RBTree const & src):_root(NULL), _endNode(NULL), _bottomNode(NULL) { *this = src; }
+    RBTree(RBTree const & src): _root(NULL), _endNode(NULL), _bottomNode(NULL) { *this = src; }
     
     ~RBTree() {
         clear();
@@ -57,8 +58,8 @@ public:
             clearRoots();
 
             _allocator = rhs._allocator;
-            _comp = rhs._comp;
             _nodeAllocator = rhs._nodeAllocator;
+            _comp = rhs._comp;
             _endNode = _nodeAllocator.allocate(1);
             _nodeAllocator.construct(_endNode, Node(value_type()));
             _bottomNode = _nodeAllocator.allocate(1);
@@ -249,17 +250,18 @@ reverse_iterator rend() { return (reverse_iterator(_bottomNode())); }
 
 public:
     void clear() {
-        clear2(_root);
+        if (_root)
+            clear2(_root);
         _root = NULL;
     }
 
 private:
     void clear2(Node* node) {
-        if (node == NULL || node == _bottomNode)
+        if (node == NULL || node == _bottomNode || node == _endNode)
             return ;
         else {
-            clear2(node->right);
             clear2(node->left);
+            clear2(node->right);
             _nodeAllocator.destroy(node);
             _nodeAllocator.deallocate(node, 1);
         }
@@ -270,9 +272,10 @@ private:
             _nodeAllocator.destroy(_endNode);
             _nodeAllocator.deallocate(_endNode, 1);
         }
-        if (_bottomNode)
+        if (_bottomNode) {
             _nodeAllocator.destroy(_bottomNode);
             _nodeAllocator.deallocate(_bottomNode, 1);
+        }
     }
 
 // SEARCH FUNCTIONS
@@ -423,6 +426,7 @@ Node* clone(Node* curr, Node* parent, Node* bottom) {
         return (NULL);
     Node* node = _nodeAllocator.allocate(1);
     _nodeAllocator.construct(node, Node(curr->data));
+    node->parent = parent;
     node->left = clone(node->left, node, bottom);
     node->right = clone(node->right, node, bottom);
     return (node);
@@ -443,8 +447,8 @@ public:
         Node* node = searchHelper(_root, key);
         if (node == NULL)
             return ;
-        if (node->left != NULL && node->righ != NULL) {
-            Node* pred = maxNode(node->left);
+        if (node->left != NULL && node->right != NULL) {
+            Node* pred = getMax(node->left);
         bool isLeft = false;
         if (node->parent && node->parent->left == node)
             isLeft = true;
@@ -456,7 +460,7 @@ public:
         int tmpColor = node->color;
         _nodeAllocator.destroy(node);
         _nodeAllocator.deallocate(node, 1);
-        _nodeAllocator.allocate(1);
+        node = _nodeAllocator.allocate(1);
         _nodeAllocator.construct(node, Node(pred->data));
         //now we connect the copy to the predecessor
         if (tmpParent) {
@@ -482,7 +486,7 @@ public:
             node->color = child->color;
             delete_case1(node);
         }
-        replace_node(node, child);
+        replace(node, child);
         _nodeAllocator.destroy(node);
         _nodeAllocator.deallocate(node, 1);
         if (_root) {

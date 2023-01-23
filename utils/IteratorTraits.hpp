@@ -17,7 +17,7 @@ struct iterator_traits {
 template <class T>
 struct iterator_traits<T*> {
 public:
-    typedef ptrdiff_t difference_type;
+    typedef std::ptrdiff_t difference_type;
     typedef T value_type;
     typedef value_type& pointer;
     typedef value_type& reference;
@@ -27,7 +27,7 @@ public:
 template <class T>
 struct iterator_traits<const T*> {
 public:
-    typedef ptrdiff_t difference_type;
+    typedef std::ptrdiff_t difference_type;
     typedef T value_type;
     typedef const value_type& const_pointer;
     typedef const value_type& const_reference;
