@@ -122,7 +122,8 @@ public:
 
     const_reference front() const { return (*_arr); }
 
-    reference back() { return (*_arr + _size - 1); }
+    reference back() { return (*(_arr + _size - 1)
+    ); }
 
     const_reference back() const { return (*_arr + _size - 1); }
 
@@ -308,22 +309,40 @@ public:
 
     friend bool operator<( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
+        //return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
     }
 
     friend bool operator<=( const vector<T,Allocator>& lhs,
                     const vector<T,Allocator>& rhs ) {
-        return (!(rhs < lhs));
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return ((i == rhs.size() && i == lhs.size()) ||
+                (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
+        //return (!(rhs < lhs));
     }
 
     friend bool operator>( const vector<T,Allocator>& lhs,
                 const vector<T,Allocator>& rhs ) {
-        return (lhs > rhs);
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
+        //return (lhs > rhs);
     }
 
     friend bool operator>=( const vector<T,Allocator>& lhs,
                  const vector<T,Allocator>& rhs ) {
-        return (!(lhs < rhs));
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return ((i == lhs.size() && i == rhs.size()) ||
+                (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
+        //return (!(lhs < rhs));
     }
 
     friend void swap( vector<T, Allocator> & lhs, vector<T, Allocator> & rhs ) { 

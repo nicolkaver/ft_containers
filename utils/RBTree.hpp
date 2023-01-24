@@ -105,6 +105,7 @@ private:
 // ROTATIONS
 
 private:
+
     void rotateLeft(Node* node) {
         if (node == NULL)
             return ;
@@ -299,12 +300,14 @@ public :
     Node* searchHelper(Node* root, key_value const & key) {
         if (root == NULL || root == _bottomNode)
             return (NULL);
+        else {
         if (root->data.first == key)
             return (root);
-        if (root->data.first && key < root->data.first) //
+        else if (key < root->data.first) //
             return (searchHelper(root->left, key));
         else
             return (searchHelper(root->right, key));
+        }
     }
 
     Node* searchHelper(Node* root, key_value const & key) const {
@@ -339,7 +342,7 @@ public:
             while (1) {
             if (data.first == tmp->data.first)
                 tmp->data.second = data.second;
-            else if (data < tmp->data) {
+            else if (data.first < tmp->data.first) {
                 if (tmp->left == NULL) {
                     tmp->left = newNode;
                     break;
@@ -397,12 +400,12 @@ private:
 
     void insert_case4(Node* node) {
         if (node && node == node->parent->right
-            && node->parent == getGrandparent(node)->left) {
+            && (getGrandparent(node) && node->parent == getGrandparent(node)->left)) {
                 rotateLeft(node->parent);
                 node = node->left;
         }
         else if (node == node->parent->left
-                    && node->parent == getGrandparent(node)->right) {
+                    && (getGrandparent(node) && node->parent == getGrandparent(node)->right)) {
             rotateRight(node->parent);
             node = node->right;
         }
@@ -413,7 +416,7 @@ private:
         node->parent->color = BLACK;
         getGrandparent(node)->color = RED;
         if (node == node->parent->left
-            && node->parent == getGrandparent(node)->left)
+            && (getGrandparent(node) && node->parent == getGrandparent(node)->left))
             rotateRight(getGrandparent(node));
         else
             rotateLeft(getGrandparent(node));

@@ -11,7 +11,7 @@
 
 void test_vector_no_reserve()
 {
-    std::cout << "VECTOR -> 1000000000 insertions, 1000000000 deletions" << std::endl;
+    std::cout << "VECTOR -> 1000000 insertions, 1000000 deletions" << std::endl;
     
     struct timeval diff, startTV, endTV;
 
@@ -20,10 +20,10 @@ void test_vector_no_reserve()
         std::cout << "STD: " << std::flush;
         gettimeofday(&startTV, NULL);
         
-        for (int i = 0; i < 1000000000; ++i) {
+        for (int i = 0; i < 1000000; ++i) {
             vec.push_back(i);
         }
-        for (int i = 0; i < 1000000000; ++i) {
+        for (int i = 0; i < 1000000; ++i) {
             vec.pop_back();
         }
         
@@ -37,10 +37,10 @@ void test_vector_no_reserve()
     std::cout << "FT: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 1000000000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         vec2.push_back(i);
     }
-    for (int i = 0; i < 1000000000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         vec2.pop_back();
     }
     
@@ -51,20 +51,20 @@ void test_vector_no_reserve()
 
 void test_vector_reserve()
 {
-    std::cout << "VECTOR -> 1000000000 insertions, 1000000000 deletions (pre-allocated)" << std::endl;
+    std::cout << "VECTOR -> 1000000 insertions, 1000000 deletions (pre-allocated)" << std::endl;
     
     struct timeval diff, startTV, endTV;
     
     {
         std::vector<int> vec;
-        vec.reserve(1000000000);
+        vec.reserve(1000000);
         std::cout << "STD: " << std::flush;
         gettimeofday(&startTV, NULL);
         
-        for (int i = 0; i < 1000000000; ++i) {
+        for (int i = 0; i < 1000000; ++i) {
             vec.push_back(i);
         }
-        for (int i = 0; i < 1000000000; ++i) {
+        for (int i = 0; i < 1000000; ++i) {
             vec.pop_back();
         }
         
@@ -75,14 +75,14 @@ void test_vector_reserve()
     }
     
     ft::vector<int> vec2;
-    vec2.reserve(1000000000);
+    vec2.reserve(1000000);
     std::cout << "FT: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 1000000000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         vec2.push_back(i);
     }
-    for (int i = 0; i < 1000000000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         vec2.pop_back();
     }
     
@@ -97,30 +97,30 @@ void test_map()
     
     struct timeval diff, startTV, endTV;
     
-    // std::map<int, int> map;
-    // std::cout << "STD: " << std::flush;
-    // gettimeofday(&startTV, NULL);
+    std::map<int, int> map;
+    std::cout << "STD: " << std::flush;
+    gettimeofday(&startTV, NULL);
     
-    // for (int i = 0; i < 10000000; ++i) {
-    //     map[i] = i;
-    // }
-    // for (int i = 0; i < 10000000; ++i) {
-    //     map.erase(i);
-    // }
+    for (int i = 0; i < 10000; ++i) {
+        map[i] = i;
+    }
+    for (int i = 0; i < 10000; ++i) {
+        map.erase(i);
+    }
     
-    // gettimeofday(&endTV, NULL);
-    // timersub(&endTV, &startTV, &diff);
+    gettimeofday(&endTV, NULL);
+    timersub(&endTV, &startTV, &diff);
     
-    // std::cout << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    std::cout << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
     
     ft::map<int, int> map2;
     std::cout << "FT: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 10000000; ++i) {
+    for (int i = 0; i < 10000; ++i) {
         map2[i] = i;
     }
-    for (int i = 0; i < 10000000; ++i) {
+    for (int i = 0; i < 10000; ++i) {
         map2.erase(i);
     }
     
@@ -174,8 +174,8 @@ void test_map_random()
 
 int main()
 {
-    // test_vector_no_reserve();
-    // test_vector_reserve();
+    //test_vector_no_reserve();
+    //test_vector_reserve();
     test_map();
     test_map_random();
     

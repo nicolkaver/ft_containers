@@ -11,7 +11,7 @@ _RED=	$'\033[1;31m
 _GREEN=	$'\033[1;32m
 _END=	$'\033[0m
 
-SRC = tmp_main.cpp
+SRC = containers_main.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

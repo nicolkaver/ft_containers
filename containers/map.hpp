@@ -170,7 +170,7 @@ public:
         iterator it = find(k);
         if (it == end())
             return (0);
-        erase(k);
+        erase(it);
         return (1);
     }
 
@@ -247,7 +247,7 @@ public:
     mapped_type& operator[] (const key_value& k) {
         iterator ret = _rbtree->search(k);
         if (ret == end())
-            return ((*(insert(ft::make_pair(k, mapped_type())).first)).second);
+            return ((*insert(ft::make_pair(k, mapped_type())).first).second);
         return ((*ret).second);
     }
 
