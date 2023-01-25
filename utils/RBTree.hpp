@@ -553,14 +553,14 @@ private:
 
     void delete_case5(Node* node) {
         if (node == node->parent->left && getSibling(node)
-            && getSibling(node)->color == BLACK
-            && (getSibling(node)->left == NULL || getSibling(node)->left->color == RED)
+            && getSibling(node)->color == BLACK && getSibling(node)->left 
+            && getSibling(node)->left->color == RED
             && (getSibling(node)->right == NULL || getSibling(node)->right->color == BLACK)) {
                 getSibling(node)->color = RED;
                 getSibling(node)->left->color = BLACK;
                 rotateRight(getSibling(node));
-            }
-        else if (node == node->parent->right
+        }
+        else if (node == node->parent->right && getSibling(node)
                     && getSibling(node)->color == BLACK
                     && getSibling(node)->right && getSibling(node)->right->color == RED
                     && (getSibling(node)->left == NULL

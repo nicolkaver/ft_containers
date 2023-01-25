@@ -92,27 +92,35 @@ void testRealStack(void) {
 
 void testMap(void) {
     ft::map<int, int> mp;
-    struct timeval diff, start, end;
-    gettimeofday(&start, NULL);
+    // struct timeval diff, start, end;
+    // gettimeofday(&start, NULL);
 
     mp[1] = 1;
     mp[2] = 2;
-    mp.erase(2);
+    mp[3] = 3;
+    ft::map<int, int>::iterator it;
+    it =  mp.begin();
+    std::cout << it->first << std::endl;
+
+    // mp.erase(2);
     mp.erase(1);
     
-    mp[1] = 1;
-    ft::map<int, int> mp2;
-    mp2 = mp;
-    std::cout << mp2.size() << std::endl;
+    // mp[1] = 1;
+    // ft::map<int, int> mp2;
+    // mp2 = mp;
+    // if (mp.size() == mp2.size()) {
+    //     mp.erase(1);
+    //     mp2.erase(1);
+    // }
     
-    int test = 1000000;
-    for (int i = 0; i < test; i++)
-        mp[i] = i;
-    for (int i = 0; i < test; i++)
-        mp.erase(i);
-    gettimeofday(&end, NULL);
-    timersub(&end, &start, &diff);
-    std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    // int test = 1000000;
+    // for (int i = 0; i < test; i++)
+    //     mp[i] = i;
+    // for (int i = 0; i < test; i++)
+    //     mp.erase(i);
+    // gettimeofday(&end, NULL);
+    // timersub(&end, &start, &diff);
+    // std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
 }
 
 void testRealMap(void) {
@@ -128,7 +136,12 @@ void testRealMap(void) {
     mp[1] = 1;
     std::map<int, int> mp2 = mp;
     //mp2 = mp;
-    std::cout << mp2.size() << std::endl;
+    if (mp.size() == mp2.size()) {
+        mp.erase(1);
+        mp2.erase(1);
+    }
+
+
     
     int test = 1000000;
     for (int i = 0; i < test; i++)
@@ -144,7 +157,7 @@ int main() {
 
     // testStack();
     // testRealStack();
-    testRealMap();
+    // testRealMap();
     testMap();
     return (0);
 }
