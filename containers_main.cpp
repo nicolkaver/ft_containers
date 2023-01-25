@@ -95,10 +95,15 @@ void testMap(void) {
     struct timeval diff, start, end;
     gettimeofday(&start, NULL);
 
-    // mp[1] = 1;
-    // mp[2] = 2;
-    // mp.erase(2);
-    // mp.erase(1);
+    mp[1] = 1;
+    mp[2] = 2;
+    mp.erase(2);
+    mp.erase(1);
+    
+    mp[1] = 1;
+    ft::map<int, int> mp2;
+    mp2 = mp;
+    std::cout << mp2.size() << std::endl;
     
     int test = 1000000;
     for (int i = 0; i < test; i++)
@@ -115,10 +120,15 @@ void testRealMap(void) {
     struct timeval diff, start, end;
     gettimeofday(&start, NULL);
 
-    // mp[1] = 1;
-    // mp[2] = 2;
-    // mp.erase(2);
-    // mp.erase(1);
+    mp[1] = 1;
+    mp[2] = 2;
+    mp.erase(2);
+    mp.erase(1);
+    
+    mp[1] = 1;
+    std::map<int, int> mp2 = mp;
+    //mp2 = mp;
+    std::cout << mp2.size() << std::endl;
     
     int test = 1000000;
     for (int i = 0; i < test; i++)
@@ -134,7 +144,7 @@ int main() {
 
     // testStack();
     // testRealStack();
-    testMap();
     testRealMap();
+    testMap();
     return (0);
 }

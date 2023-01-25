@@ -251,8 +251,7 @@ reverse_iterator rend() { return (reverse_iterator(_bottomNode())); }
 
 public:
     void clear() {
-        if (_root)
-            clear2(_root);
+        clear2(_root);
         _root = NULL;
     }
 
@@ -322,104 +321,6 @@ public :
     }
 
 // INSERT FUNCTIONS
-
-// public:
-//   iterator insertNode(const value_type &data) {
-//     if (_root != NULL) {
-//       _root->parent = NULL;
-//       _bottomNode->parent->left = NULL;
-//       _bottomNode->parent = NULL;
-//     }
-//     _endNode->left = NULL;
-//     Node *inserted_node = _nodeAllocator.allocate(1);
-//     _nodeAllocator.construct(inserted_node, Node(data));
-//     if (_root == NULL) {
-//       _root = inserted_node;
-//     } else {
-//       Node *n = _root;
-//       while (1) {
-//         bool cmpRes = _comp(data.first, n->data.first);
-//         if (data.first == n->data.first) {
-//           n->data.second = data.second;
-//           return n;
-//         } else if (cmpRes) {
-//           if (n->left == NULL) {
-//             n->left = inserted_node;
-//             break;
-//           } else {
-//             n = n->left;
-//           }
-//         } else {
-//           if (n->right == NULL) {
-//             n->right = inserted_node;
-//             break;
-//           } else {
-//             n = n->right;
-//           }
-//         }
-//       }
-//       inserted_node->parent = n;
-//     }
-//     insert_case1(inserted_node);
-//     _root->parent = _endNode;
-//     _endNode->left = _root;
-//     Node *minNode = getMin(_root);
-//     minNode->left = _bottomNode;
-//     _bottomNode->parent = minNode;
-//     return search(data.first);
-//   }
-
-//  private:
-//   void insert_case1(Node *n) {
-//     if (n->parent == NULL) {
-//       n->color = BLACK;
-//     } else {
-//       insert_case2(n);
-//     }
-//   }
-
-//   void insert_case2(Node *n) {
-//     if (n->parent->color == BLACK) {
-//       return;
-//     } else {
-//       insert_case3(n);
-//     }
-//   }
-
-//   void insert_case3(Node *n) {
-//     if (getUncle(n) && getUncle(n)->color == RED) {
-//       n->parent->color = 0;
-//       getUncle(n)->color = 0;
-//       getGrandparent(n)->color = 1;
-//       insert_case1(getGrandparent(n));
-//     } else {
-//       insert_case4(n);
-//     }
-//   }
-
-//   void insert_case4(Node *n) {
-//     if (n == n->parent->right &&
-//         (getGrandparent(n) && n->parent == getGrandparent(n)->left)) {
-//       rotateLeft(n->parent);
-//       n = n->left;
-//     } else if (n == n->parent->left &&
-//                (getGrandparent(n) && n->parent == getGrandparent(n)->right)) {
-//       rotateRight(n->parent);
-//       n = n->right;
-//     }
-//     insert_case5(n);
-//   }
-
-//   void insert_case5(Node *n) {
-//     n->parent->color = 0;
-//     getGrandparent(n)->color = 1;
-//     if (n == n->parent->left &&
-//         (getGrandparent(n) && n->parent == getGrandparent(n)->left)) {
-//       rotateRight(getGrandparent(n));
-//     } else {
-//       rotateLeft(getGrandparent(n));
-//     }
-//   }
 
 public:
     iterator insertNode(value_type const & data) {
@@ -525,14 +426,16 @@ private:
 // CLONE
 
 Node* clone(Node* curr, Node* parent, Node* bottom) {
-    if (curr == NULL || curr == bottom)
+    if (curr != NULL && curr != bottom) {
+        Node* node = _nodeAllocator.allocate(1);
+        _nodeAllocator.construct(node, Node(curr->data));
+        node->parent = parent;
+        node->left = clone(node->left, node, bottom);
+        node->right = clone(node->right, node, bottom);
+        return (node);
+    }
+    else
         return (NULL);
-    Node* node = _nodeAllocator.allocate(1);
-    _nodeAllocator.construct(node, Node(curr->data));
-    node->parent = parent;
-    node->left = clone(node->left, node, bottom);
-    node->right = clone(node->right, node, bottom);
-    return (node);
 }
 
 // DELETIONS
