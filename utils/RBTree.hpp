@@ -146,7 +146,7 @@ private:
 
 public:
     void replace(Node* n1, Node* n2) {
-        if (n1 == NULL)
+        if (n1->parent == NULL)
             _root = n2;
         else if (n1 == n1->parent->left)
             n1->parent->left = n2;
@@ -323,6 +323,104 @@ public :
 
 // INSERT FUNCTIONS
 
+// public:
+//   iterator insertNode(const value_type &data) {
+//     if (_root != NULL) {
+//       _root->parent = NULL;
+//       _bottomNode->parent->left = NULL;
+//       _bottomNode->parent = NULL;
+//     }
+//     _endNode->left = NULL;
+//     Node *inserted_node = _nodeAllocator.allocate(1);
+//     _nodeAllocator.construct(inserted_node, Node(data));
+//     if (_root == NULL) {
+//       _root = inserted_node;
+//     } else {
+//       Node *n = _root;
+//       while (1) {
+//         bool cmpRes = _comp(data.first, n->data.first);
+//         if (data.first == n->data.first) {
+//           n->data.second = data.second;
+//           return n;
+//         } else if (cmpRes) {
+//           if (n->left == NULL) {
+//             n->left = inserted_node;
+//             break;
+//           } else {
+//             n = n->left;
+//           }
+//         } else {
+//           if (n->right == NULL) {
+//             n->right = inserted_node;
+//             break;
+//           } else {
+//             n = n->right;
+//           }
+//         }
+//       }
+//       inserted_node->parent = n;
+//     }
+//     insert_case1(inserted_node);
+//     _root->parent = _endNode;
+//     _endNode->left = _root;
+//     Node *minNode = getMin(_root);
+//     minNode->left = _bottomNode;
+//     _bottomNode->parent = minNode;
+//     return search(data.first);
+//   }
+
+//  private:
+//   void insert_case1(Node *n) {
+//     if (n->parent == NULL) {
+//       n->color = BLACK;
+//     } else {
+//       insert_case2(n);
+//     }
+//   }
+
+//   void insert_case2(Node *n) {
+//     if (n->parent->color == BLACK) {
+//       return;
+//     } else {
+//       insert_case3(n);
+//     }
+//   }
+
+//   void insert_case3(Node *n) {
+//     if (getUncle(n) && getUncle(n)->color == RED) {
+//       n->parent->color = 0;
+//       getUncle(n)->color = 0;
+//       getGrandparent(n)->color = 1;
+//       insert_case1(getGrandparent(n));
+//     } else {
+//       insert_case4(n);
+//     }
+//   }
+
+//   void insert_case4(Node *n) {
+//     if (n == n->parent->right &&
+//         (getGrandparent(n) && n->parent == getGrandparent(n)->left)) {
+//       rotateLeft(n->parent);
+//       n = n->left;
+//     } else if (n == n->parent->left &&
+//                (getGrandparent(n) && n->parent == getGrandparent(n)->right)) {
+//       rotateRight(n->parent);
+//       n = n->right;
+//     }
+//     insert_case5(n);
+//   }
+
+//   void insert_case5(Node *n) {
+//     n->parent->color = 0;
+//     getGrandparent(n)->color = 1;
+//     if (n == n->parent->left &&
+//         (getGrandparent(n) && n->parent == getGrandparent(n)->left)) {
+//       rotateRight(getGrandparent(n));
+//     } else {
+//       rotateLeft(getGrandparent(n));
+//     }
+//   }
+
 public:
     iterator insertNode(value_type const & data) {
         if (_root != NULL) {
@@ -340,15 +438,17 @@ public:
         else {
             Node* tmp = this->_root;
             while (1) {
-            if (data.first == tmp->data.first)
+            if (data.first == tmp->data.first) {
                 tmp->data.second = data.second;
+                return (tmp);
+            }
             else if (data.first < tmp->data.first) {
                 if (tmp->left == NULL) {
                     tmp->left = newNode;
                     break;
                 }
-                else
-                    tmp = tmp->left;
+            else
+                tmp = tmp->left;
             }
             else {
                 if (tmp->right == NULL) {
@@ -367,7 +467,7 @@ public:
         Node *smallestNode = getMin(_root);
         smallestNode->left = _bottomNode;
         _bottomNode->parent = smallestNode;
-        return search(data.first);
+        return (search(data.first));
     }
 
 // the 5 cases from https://www.happycoders.eu/algorithms/red-black-tree-java/
@@ -452,41 +552,44 @@ public:
             return ;
         if (node->left != NULL && node->right != NULL) {
             Node* pred = getMax(node->left);
-        bool isLeft = false;
-        if (node->parent && node->parent->left == node)
-            isLeft = true;
+            bool isLeft = false;
+            if (node->parent && node->parent->left == node)
+                isLeft = true;
         //we create temporary copy of the deleted node that we 
         //will later connect to its predecessor
-        Node* tmpParent = node->parent;
-        Node* tmpRight = node->right;
-        Node* tmpLeft = node->left;
-        int tmpColor = node->color;
-        _nodeAllocator.destroy(node);
-        _nodeAllocator.deallocate(node, 1);
-        node = _nodeAllocator.allocate(1);
-        _nodeAllocator.construct(node, Node(pred->data));
+            Node* tmpParent = node->parent;
+            Node* tmpRight = node->right;
+            Node* tmpLeft = node->left;
+            int tmpColor = node->color;
+            _nodeAllocator.destroy(node);
+            _nodeAllocator.deallocate(node, 1);
+            node = _nodeAllocator.allocate(1);
+            _nodeAllocator.construct(node, Node(pred->data));
         //now we connect the copy to the predecessor
-        if (tmpParent) {
-            node->parent = tmpParent;
+            if (tmpParent) {
+                node->parent = tmpParent;
             if (isLeft)
                 tmpParent->left = node;
             else
                 tmpParent->right = node;
-        }
-        if (tmpLeft) {
-            tmpLeft->parent = node;
-            node->left = tmpLeft;
-        }
-        if (tmpRight) {
-            tmpRight->parent = node;
-            node->right = tmpRight;
-        }
-        node->color = tmpColor;
-        node = pred;
+            }
+            if (tmpLeft) {
+                tmpLeft->parent = node;
+                node->left = tmpLeft;
+            }
+            if (tmpRight) {
+                tmpRight->parent = node;
+                node->right = tmpRight;
+            }
+            node->color = tmpColor;
+            node = pred;
         }
         child = node->right == NULL ? node->left : node->right;
         if (node->color == BLACK) {
-            node->color = child->color;
+            if (child != NULL)
+                node->color = child->color;
+            else
+                node->color = BLACK;
             delete_case1(node);
         }
         replace(node, child);

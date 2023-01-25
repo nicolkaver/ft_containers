@@ -92,8 +92,42 @@ void testRealStack(void) {
 
 void testMap(void) {
     ft::map<int, int> mp;
-    mp[1] = 1;
-    mp.erase(1);
+    struct timeval diff, start, end;
+    gettimeofday(&start, NULL);
+
+    // mp[1] = 1;
+    // mp[2] = 2;
+    // mp.erase(2);
+    // mp.erase(1);
+    
+    int test = 1000000;
+    for (int i = 0; i < test; i++)
+        mp[i] = i;
+    for (int i = 0; i < test; i++)
+        mp.erase(i);
+    gettimeofday(&end, NULL);
+    timersub(&end, &start, &diff);
+    std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+}
+
+void testRealMap(void) {
+    std::map<int, int> mp;
+    struct timeval diff, start, end;
+    gettimeofday(&start, NULL);
+
+    // mp[1] = 1;
+    // mp[2] = 2;
+    // mp.erase(2);
+    // mp.erase(1);
+    
+    int test = 1000000;
+    for (int i = 0; i < test; i++)
+        mp[i] = i;
+    for (int i = 0; i < test; i++)
+        mp.erase(i);
+    gettimeofday(&end, NULL);
+    timersub(&end, &start, &diff);
+    std::cout << "std::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
 }
 
 int main() {
@@ -101,5 +135,6 @@ int main() {
     // testStack();
     // testRealStack();
     testMap();
+    testRealMap();
     return (0);
 }
