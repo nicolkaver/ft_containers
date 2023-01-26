@@ -80,7 +80,7 @@ public:
 // RELATIVE NODES
 private:
     Node* getSibling(Node* node) {
-        if (node == NULL && node->parent == NULL)
+        if (node == NULL || node->parent == NULL)
             return (NULL);
         if (node == node->parent->left)
             return (node->parent->right);
@@ -89,22 +89,50 @@ private:
     }
 
     Node* getGrandparent(Node* node) {
-        if (node == NULL && node->parent == NULL && node->parent->parent == NULL)
-            return (NULL);
-        else
+        if (node != NULL && node->parent != NULL && node->parent->parent != NULL)
             return (node->parent->parent);
+        else
+            return (NULL);
     }
 
     Node* getUncle(Node* node) {
-        if (node == NULL && node->parent == NULL && node->parent->parent == NULL)
-            return (NULL);
-        else
+        if (node != NULL && node->parent != NULL && node->parent->parent != NULL)
             return (getSibling(node->parent));
+        else
+            return (NULL);
     }
 
 // ROTATIONS
 
 private:
+
+    // void rotateLeft(Node* node) {
+    //     if (node == NULL)
+    //         return ;
+    //     Node* tmp = node->right;
+    //     replace(node, tmp);
+    //     if (node && tmp)
+    //         node->right = tmp->left;
+    //     if (tmp && tmp->left != NULL)
+    //         tmp->left->parent = node;
+    //     if (tmp)
+    //         tmp->left = node;
+    //     node->parent = tmp;
+    // }
+
+    // void rotateRight(Node* node) {
+    //     if (node == NULL)
+    //         return ;
+    //     Node* tmp = node->left;
+    //     replace(node, tmp);
+    //     if (node && tmp)
+    //         node->left = tmp->right;
+    //     if (tmp && tmp->right != NULL)
+    //         tmp->right->parent = node;
+    //     if (tmp)
+    //         tmp->right = node;
+    //     node->parent = tmp;
+    // }
 
     void rotateLeft(Node* node) {
         if (node == NULL)
@@ -339,26 +367,26 @@ public:
         else {
             Node* tmp = this->_root;
             while (1) {
-            if (data.first == tmp->data.first) {
-                tmp->data.second = data.second;
-                return (tmp);
-            }
-            else if (data.first < tmp->data.first) {
-                if (tmp->left == NULL) {
-                    tmp->left = newNode;
-                    break;
+                if (data.first == tmp->data.first) {
+                    tmp->data.second = data.second;
+                    return (tmp);
                 }
-            else
-                tmp = tmp->left;
-            }
-            else {
-                if (tmp->right == NULL) {
-                    tmp->right = newNode;
+                else if (data.first < tmp->data.first) {
+                    if (tmp->left == NULL) {
+                        tmp->left = newNode;
                     break;
                 }
                 else
-                    tmp = tmp->right;
-            }
+                    tmp = tmp->left;
+                }
+                else {
+                    if (tmp->right == NULL) {
+                        tmp->right = newNode;
+                        break;
+                    }
+                    else
+                        tmp = tmp->right;
+                }
             }
             newNode->parent = tmp;
         }
@@ -400,7 +428,7 @@ private:
     }
 
     void insert_case4(Node* node) {
-        if (node && node == node->parent->right
+        if (node == node->parent->right
             && (getGrandparent(node) && node->parent == getGrandparent(node)->left)) {
                 rotateLeft(node->parent);
                 node = node->left;
@@ -417,10 +445,12 @@ private:
         node->parent->color = BLACK;
         getGrandparent(node)->color = RED;
         if (node == node->parent->left
-            && (getGrandparent(node) && node->parent == getGrandparent(node)->left))
+            && (getGrandparent(node) && node->parent == getGrandparent(node)->left)) {
             rotateRight(getGrandparent(node));
-        else
+        }
+        else {
             rotateLeft(getGrandparent(node));
+        }
     }
 
 // CLONE

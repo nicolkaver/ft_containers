@@ -92,35 +92,39 @@ void testRealStack(void) {
 
 void testMap(void) {
     ft::map<int, int> mp;
-    // struct timeval diff, start, end;
-    // gettimeofday(&start, NULL);
+    struct timeval diff, start, end;
+    gettimeofday(&start, NULL);
 
     mp[1] = 1;
     mp[2] = 2;
     mp[3] = 3;
-    ft::map<int, int>::iterator it;
-    it =  mp.begin();
-    std::cout << it->first << std::endl;
 
-    // mp.erase(2);
+    if (mp.count(2) == 1)
+        std::cout << "LOL\n";
+
+    ft::map<int, int>::iterator it;
+    it = mp.begin();
+    for (; it != mp.end(); it++)
+        ;
+
     mp.erase(1);
+    mp.erase(2);
     
-    // mp[1] = 1;
-    // ft::map<int, int> mp2;
-    // mp2 = mp;
-    // if (mp.size() == mp2.size()) {
-    //     mp.erase(1);
-    //     mp2.erase(1);
-    // }
-    
-    // int test = 1000000;
-    // for (int i = 0; i < test; i++)
-    //     mp[i] = i;
-    // for (int i = 0; i < test; i++)
-    //     mp.erase(i);
-    // gettimeofday(&end, NULL);
-    // timersub(&end, &start, &diff);
-    // std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    ft::map<int, int> mp2;
+    mp2 = mp;
+    if (mp.size() == mp2.size()) {
+        mp.erase(3);
+        mp2.erase(3);
+    }
+
+    int test = 1000000;
+    for (int i = 0; i < test; i++)
+        mp[i] = i;
+    for (int i = 0; i < test; i++)
+        mp.erase(i);
+    gettimeofday(&end, NULL);
+    timersub(&end, &start, &diff);
+    std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
 }
 
 void testRealMap(void) {
@@ -142,7 +146,6 @@ void testRealMap(void) {
     }
 
 
-    
     int test = 1000000;
     for (int i = 0; i < test; i++)
         mp[i] = i;
