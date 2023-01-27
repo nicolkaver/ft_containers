@@ -26,7 +26,8 @@ public:
     ~RBTreeIterator() {}
 
     RBTreeIterator & operator=(RBTreeIterator const & rhs) {
-        this->_ptr = rhs._ptr;
+        if (this != &rhs)
+            this->_ptr = rhs._ptr;
         return (*this);
     }
 
@@ -63,8 +64,8 @@ public:
 
     pointer operator->() { return (&(_ptr->data)); }
 
-    // const_reference operator*() const { return *_ptr; }
-    // const_pointer operator->() const { return _ptr; }
+    reference operator*() const { return *_ptr; }
+    pointer operator->() const { return _ptr; }
 
     RBTreeIterator operator++() {
         _ptr = getSuccessor(_ptr);
@@ -103,9 +104,9 @@ public:
     Node* getSuccessor(Node* node) {
         if (node == NULL)
             return (NULL);
-        Node* parent = node->parent;
         if (node->right)
             return (getMinValue(node->right));
+        Node* parent = node->parent;
         while (parent && node == parent->right) {
             node = parent;
             parent = parent->parent;
@@ -116,9 +117,9 @@ public:
     Node* getPredecessor(Node* node) {
         if (node == NULL)
             return (NULL);
-        Node* parent = node->parent;
         if (node->left)
             return (getMaxValue(node->left));
+        Node* parent = node->parent;
         while (parent && node == parent->left) {
             node = parent;
             parent = parent->parent;

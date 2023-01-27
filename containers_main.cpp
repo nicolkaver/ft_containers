@@ -98,9 +98,7 @@ void testMap(void) {
     mp[1] = 1;
     mp[2] = 2;
     mp[3] = 3;
-
-    if (mp.count(2) == 1)
-        std::cout << "LOL\n";
+    mp.insert(ft::pair<int, int>(4, 4));
 
     ft::map<int, int>::iterator it;
     it = mp.begin();

@@ -203,7 +203,7 @@ public:
 
     size_type count (const key_value& k) const {
         iterator it = find(k);
-        if (it == end())
+        if (it == _rbtree->end())
             return (0);
         return (1);
     }
@@ -212,7 +212,7 @@ public:
         return (_rbtree->search(k));
     }
     
-    const_iterator find (const key_value& k) const {
+    iterator find (const key_value& k) const {
         return (_rbtree->search(k));
     }
 
