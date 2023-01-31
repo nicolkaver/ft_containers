@@ -21,7 +21,7 @@ public:
 
     ReverseIterator& operator=(const ReverseIterator& src) {
         _ptr = src._ptr;
-        return *this;
+        return (*this);
     }
 
     reference operator*() { return *_ptr; }
@@ -32,7 +32,7 @@ public:
 
     ReverseIterator operator++() {
         --_ptr;
-        return *this;
+        return (*this);
     }
 
     ReverseIterator operator++(int) {

@@ -101,10 +101,10 @@ void test_map()
     std::cout << "STD: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         map[i] = i;
     }
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         map.erase(i);
     }
     
@@ -117,10 +117,10 @@ void test_map()
     std::cout << "FT: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         map2[i] = i;
     }
-    for (int i = 0; i < 10000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         map2.erase(i);
     }
     
@@ -142,10 +142,10 @@ void test_map_random()
         std::cout << "STD: " << std::flush;
         gettimeofday(&startTV, NULL);
         
-        for (int i = 0; i < 10000000; ++i) {
+        for (int i = 0; i < 10000; ++i) {
             map[rand()] = i;
         }
-        for (int i = 0; i < 10000000; ++i) {
+        for (int i = 0; i < 10000; ++i) {
             map.erase(map.begin());
         }
         
@@ -160,10 +160,10 @@ void test_map_random()
     std::cout << "FT: " << std::flush;
     gettimeofday(&startTV, NULL);
     
-    for (int i = 0; i < 10000000; ++i) {
+    for (int i = 0; i < 10000; ++i) {
         map2[rand()] = i;
     }
-    for (int i = 0; i < 10000000; ++i) {
+    for (int i = 0; i < 10000; ++i) {
         map2.erase(map2.begin());
     }
     
@@ -174,8 +174,8 @@ void test_map_random()
 
 int main()
 {
-    //test_vector_no_reserve();
-    //test_vector_reserve();
+    test_vector_no_reserve();
+    test_vector_reserve();
     test_map();
     test_map_random();
     

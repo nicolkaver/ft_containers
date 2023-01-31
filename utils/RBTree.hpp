@@ -271,7 +271,7 @@ const_reverse_iterator rbegin() const { //continue
     }
 }
 
-reverse_iterator rend() { return (reverse_iterator(_bottomNode())); }
+reverse_iterator rend() { return (reverse_iterator(_bottomNode)); }
 
 //const_reverse_iterator rend() { return (const_reverse_iterator(_bottomNode())); }
 
@@ -365,7 +365,7 @@ public:
         if (_root == NULL)
             _root = newNode;
         else {
-            Node* tmp = this->_root;
+            Node* tmp = _root;
             while (1) {
                 if (data.first == tmp->data.first) {
                     tmp->data.second = data.second;
@@ -374,10 +374,10 @@ public:
                 else if (data.first < tmp->data.first) {
                     if (tmp->left == NULL) {
                         tmp->left = newNode;
-                    break;
-                }
-                else
-                    tmp = tmp->left;
+                        break;
+                    }
+                    else
+                        tmp = tmp->left;
                 }
                 else {
                     if (tmp->right == NULL) {

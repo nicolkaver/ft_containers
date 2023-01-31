@@ -153,7 +153,7 @@ public:
 
     template< class InputIt >
     void insert( InputIt first, InputIt last,
-                    typename ft::enable_if<!ft::is_integral<InputIt>::val,
+                    typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                      InputIt>::type* = NULL ) {
         while (first != last) {
             insert(*first);

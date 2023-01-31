@@ -22,7 +22,7 @@ public:
 
     RBTreeIterator(): _ptr(NULL) {}
     RBTreeIterator(Node* ptr): _ptr(ptr) {}
-    RBTreeIterator(RBTreeIterator const & src) { *this = src; }
+    RBTreeIterator(RBTreeIterator const & src): _ptr(src._ptr) {}
     ~RBTreeIterator() {}
 
     RBTreeIterator & operator=(RBTreeIterator const & rhs) {
@@ -30,6 +30,11 @@ public:
             this->_ptr = rhs._ptr;
         return (*this);
     }
+
+    template <typename T1, typename U1>
+    RBTreeIterator(const RBTreeIterator<T1, U1>& other) : _ptr(other.getPtr()){};
+
+    Node* getPtr(void) const { return (_ptr); }
 
     friend bool operator==(const RBTreeIterator& lhs,
                         const RBTreeIterator& rhs) {
@@ -101,12 +106,40 @@ public:
         return (node);
     }
 
-    Node* getSuccessor(Node* node) {
-        if (node == NULL)
-            return (NULL);
+    // Node* getSuccessor(Node* node) {
+    //     if (node == NULL)
+    //         return (NULL);
+    //     if (node->right)
+    //         return (getMinValue(node->right));
+    //     Node* parent = node->parent;
+    //     while (parent && node == parent->right) {
+    //         node = parent;
+    //         parent = parent->parent;
+    //     }
+    //     return (parent);
+    // }
+
+    // Node* getPredecessor(Node* node) {
+    //     if (node == NULL)
+    //         return (NULL);
+    //     if (node->left)
+    //         return (getMaxValue(node->left));
+    //     Node* parent = node->parent;
+    //     while (parent && node == parent->left) {
+    //         node = parent;
+    //         parent = parent->parent;
+    //     }
+    //     return (parent);
+    // }
+
+        Node* getSuccessor(Node* node) {
+        //if (node == NULL)
+        //    return (NULL);
+        Node* parent = node->parent;
         if (node->right)
             return (getMinValue(node->right));
-        Node* parent = node->parent;
+        // while (node->data > parent->data)
+        //         parent = parent->parent;
         while (parent && node == parent->right) {
             node = parent;
             parent = parent->parent;
@@ -115,17 +148,20 @@ public:
     }
 
     Node* getPredecessor(Node* node) {
-        if (node == NULL)
-            return (NULL);
+        //if (node == NULL)
+        //    return (NULL);
+        Node* parent = node->parent;
         if (node->left)
             return (getMaxValue(node->left));
-        Node* parent = node->parent;
+        // while (node->data < parent->data)
+        //     parent = parent->parent; 
         while (parent && node == parent->left) {
             node = parent;
-            parent = parent->parent;
-        }
+            parent = parent->parent;       
         return (parent);
+        }
     }
+
 
 private:
     Node* _ptr;

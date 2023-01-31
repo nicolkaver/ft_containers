@@ -30,6 +30,12 @@ public:
         return (*this);
     }
 
+    template <typename T1, typename U1>
+    RBTreeReverseIterator(const RBTreeReverseIterator<T1, U1>& other)
+        : _ptr(other.getPtr()) {}
+
+    Node* getPtr(void) const { return (_ptr); }
+
     friend bool operator==(const RBTreeReverseIterator& lhs,
                             const RBTreeReverseIterator& rhs) {
     return (lhs._ptr == rhs._ptr);
@@ -46,24 +52,24 @@ public:
 
     RBTreeReverseIterator operator++() {
         _ptr = getPredecessor(_ptr);
-        return *this;
+        return (*this);
     }
 
     RBTreeReverseIterator operator++(int) {
         RBTreeReverseIterator tmp = *this;
         operator++();
-        return tmp;
+        return (tmp);
     }
 
     RBTreeReverseIterator operator--() {
         _ptr = getSuccessor(_ptr);
-        return *this;
+        return (*this);
     }
 
     RBTreeReverseIterator operator--(int) {
         RBTreeReverseIterator tmp = *this;
         operator--();
-        return tmp;
+        return (tmp);
     }
 
     Node* getMinValue(Node* node) {
@@ -79,24 +85,32 @@ public:
     }
 
     Node* getSuccessor(Node* node) {
-        if (node == NULL)
-            return (NULL);
+        //if (node == NULL)
+        //    return (NULL);
         Node* parent = node->parent;
         if (node->right)
             return (getMinValue(node->right));
-        while (node->data > parent->data)
-                parent = parent->parent;
+        // while (node->data > parent->data)
+        //         parent = parent->parent;
+        while (parent && node == parent->right) {
+            node = parent;
+            parent = parent->parent;
+        }
         return (parent);
     }
 
     Node* getPredecessor(Node* node) {
-        if (node == NULL)
-            return (NULL);
+        //if (node == NULL)
+        //    return (NULL);
         Node* parent = node->parent;
         if (node->left)
             return (getMaxValue(node->left));
-        while (node->data < parent->data)
-            parent = parent->parent;        
+        // while (node->data < parent->data)
+        //     parent = parent->parent; 
+        while (parent && node == parent->left) {
+            node = parent;
+            parent = parent->parent;       
+        }
         return (parent);
     }
 

@@ -10,6 +10,7 @@
 # include "../utils/ReverseIterator.hpp"
 # include "../utils/TypeTraits.hpp"
 # include "../utils/algorithm.hpp"
+# include "../utils/IteratorTraits.hpp"
 
 namespace ft {
 template<class T, class Allocator = std::allocator<T> >
@@ -75,9 +76,8 @@ public:
     }
 
     void assign(size_type count, value_type const & value) {
-        if (count > capacity()) {
+        if (count > capacity())
             reserve(count);
-        }
         for (size_type i = 0; i < count; ++i) {
             _allocator.construct(_arr + i, value);
         }
@@ -87,11 +87,14 @@ public:
     template <class InputIt>
     void assign(InputIt first, InputIt last,
                 typename ft::enable_if<!ft::is_integral<InputIt>::value,
-                                        InputIt>::type* = NULL) {
-        size_type count = static_cast<size_type>(std::distance(first, last));
-        if (count > capacity()) {
+                                    InputIt>::type* = NULL) {
+        size_type count = 0;
+        InputIt tmp = first;
+        InputIt tmp2 = last;
+        for (; tmp != tmp2; tmp++)
+            count++;
+        if (count > capacity())
             reserve(count);
-        }
         for (size_type i = 0; i < count; ++i) {
             _allocator.construct(_arr + i, *(first++));
         }
@@ -198,7 +201,11 @@ public:
     }
 
     iterator insert( iterator pos, const T& value ) {
-        size_type i = static_cast<size_type>(std::distance(begin(), pos));
+        //size_type i = static_cast<size_type>(std::distance(begin(), pos));
+        size_t i = 0;
+        iterator it = begin();
+        for (; it != pos; it++)
+            i++;
         insert(pos, 1, value);
         return (iterator(_arr + i));
     }
@@ -210,12 +217,13 @@ public:
         vector<T, Allocator> tmp(pos, end());
         iterator it = tmp.begin();
         iterator ite = tmp.end();
-        erase(pos, end());
+        erase(pos, end() - 1);
         for (size_type i = 0; i < count; i++)
             push_back(value);
         for (; it != ite; it++) {
             push_back(*it);
         }
+        erase(tmp.begin(), tmp.end());
     }
 
     template <class InputIt>
@@ -223,13 +231,15 @@ public:
                 typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                      InputIt>::type* = NULL) {
         vector<T, Allocator> tmp(pos, end());
-        // size_type count = static_cast<size_type>(std::distance(first, last));
-        difference_type count = last - first;
+        size_type count = 0;
+        iterator it1 = first;
+        for (; it1 != last; it1++)
+            count++;
         if (count == 0)
             return ;
         iterator it = tmp.begin();
         iterator ite = tmp.end();
-        erase(it, end());
+        erase(pos, end());
         for (; first != last; first++)
             push_back(*first);
         for (; it != ite; it++)
@@ -299,7 +309,17 @@ public:
 
     friend bool operator==( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+        size_t i = 0;
+        if (lhs.size() != rhs.size())
+            return (false);
+        while (i < lhs.size()) {
+            if (lhs._arr[i] != rhs._arr[i])
+                return false;
+        }
+        return true;
+
+
+        //return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
 
     friend bool operator!=( const vector<T,Allocator>& lhs,
@@ -313,36 +333,36 @@ public:
         while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
             i++;
         return (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
-        //return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        // return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
     }
 
     friend bool operator<=( const vector<T,Allocator>& lhs,
                     const vector<T,Allocator>& rhs ) {
-        size_t i = 0;
-        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-            i++;
-        return ((i == rhs.size() && i == lhs.size()) ||
-                (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
-        //return (!(rhs < lhs));
+        // size_t i = 0;
+        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+        //     i++;
+        // return ((i == rhs.size() && i == lhs.size()) ||
+        //         (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
+        return (!(rhs < lhs));
     }
 
     friend bool operator>( const vector<T,Allocator>& lhs,
                 const vector<T,Allocator>& rhs ) {
-        size_t i = 0;
-        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-            i++;
-        return (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
-        //return (lhs > rhs);
+        // size_t i = 0;
+        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+        //     i++;
+        // return (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
+        return (rhs < lhs);
     }
 
     friend bool operator>=( const vector<T,Allocator>& lhs,
                  const vector<T,Allocator>& rhs ) {
-        size_t i = 0;
-        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-            i++;
-        return ((i == lhs.size() && i == rhs.size()) ||
-                (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
-        //return (!(lhs < rhs));
+        // size_t i = 0;
+        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+        //     i++;
+        // return ((i == lhs.size() && i == rhs.size()) ||
+        //         (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
+        return (!(lhs < rhs));
     }
 
     friend void swap( vector<T, Allocator> & lhs, vector<T, Allocator> & rhs ) { 
