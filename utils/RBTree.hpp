@@ -106,34 +106,6 @@ private:
 
 private:
 
-    // void rotateLeft(Node* node) {
-    //     if (node == NULL)
-    //         return ;
-    //     Node* tmp = node->right;
-    //     replace(node, tmp);
-    //     if (node && tmp)
-    //         node->right = tmp->left;
-    //     if (tmp && tmp->left != NULL)
-    //         tmp->left->parent = node;
-    //     if (tmp)
-    //         tmp->left = node;
-    //     node->parent = tmp;
-    // }
-
-    // void rotateRight(Node* node) {
-    //     if (node == NULL)
-    //         return ;
-    //     Node* tmp = node->left;
-    //     replace(node, tmp);
-    //     if (node && tmp)
-    //         node->left = tmp->right;
-    //     if (tmp && tmp->right != NULL)
-    //         tmp->right->parent = node;
-    //     if (tmp)
-    //         tmp->right = node;
-    //     node->parent = tmp;
-    // }
-
     void rotateLeft(Node* node) {
         if (node == NULL)
             return ;
@@ -460,8 +432,8 @@ Node* clone(Node* curr, Node* parent, Node* bottom) {
         Node* node = _nodeAllocator.allocate(1);
         _nodeAllocator.construct(node, Node(curr->data));
         node->parent = parent;
-        node->left = clone(node->left, node, bottom);
-        node->right = clone(node->right, node, bottom);
+        node->left = clone(curr->left, node, bottom);
+        node->right = clone(curr->right, node, bottom);
         return (node);
     }
     else

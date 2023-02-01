@@ -23,6 +23,7 @@
 #include <map>
 
 #define GREEN "\033[1;32m"
+#define BOLD "\033[1;3m"
 #define END "\033[0m"
 
 void testStack(void) {
@@ -62,7 +63,7 @@ void testStack(void) {
 
     gettimeofday(&end, NULL);
     timersub(&end, &start, &diff);
-    std::cout << "ft::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    std::cout << BOLD << "ft::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << END << std::endl;
 }
 
 void testRealStack(void) {
@@ -96,42 +97,7 @@ void testRealStack(void) {
 
     gettimeofday(&end, NULL);
     timersub(&end, &start, &diff);
-    std::cout << "std::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
-}
-
-void testMap(void) {
-    ft::map<int, int> mp;
-    struct timeval diff, start, end;
-    gettimeofday(&start, NULL);
-
-    mp[1] = 1;
-    mp[2] = 2;
-    mp[3] = 3;
-    mp.insert(ft::pair<int, int>(4, 4));
-
-    ft::map<int, int>::iterator it;
-    it = mp.begin();
-    for (; it != mp.end(); it++)
-        ;
-
-    mp.erase(1);
-    mp.erase(2);
-    
-    ft::map<int, int> mp2;
-    mp2 = mp;
-    if (mp.size() == mp2.size()) {
-        mp.erase(3);
-        mp2.erase(3);
-    }
-
-    int test = 1000000;
-    for (int i = 0; i < test; i++)
-        mp[i] = i;
-    for (int i = 0; i < test; i++)
-        mp.erase(i);
-    gettimeofday(&end, NULL);
-    timersub(&end, &start, &diff);
-    std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
+    std::cout << BOLD << "std::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << END << std::endl;
 }
 
 void testRealMap(void) {
@@ -196,13 +162,71 @@ void testVector(void) {
         std::cout << "Tested empty" << std::endl;
 
     vec2.erase(vec2.begin());
-    it = vec2.begin();
-    ite = vec2.end();
-    for (; it != ite; it++)
-        std::cout << *it << std::endl;
+    if (vec2.size() == 4)
+        std::cout << "Tested size" << std::endl;
+    while (!vec.empty())
+        vec.pop_back();
+    std::cout << "Tested empty" << std::endl << "Tested pop_back" << std::endl;
+    
+    std::vector<int> vec3;
+    size_t store = 5;
+    vec3.reserve(store);
+    if (vec3.capacity() == store)
+        std::cout << "Tested reserve" << std::endl << "Tested capacity" << std::endl;
+
+    vec2.insert(vec2.end(), 3, 6);
+    vec2.erase(vec2.end());
+    if (vec2.size() == 6)
+        std::cout << "Tested insert" << std::endl << "Tested erase" << std::endl;
+
+    vec2.resize(9, 9);
+    ite = vec2.end() - 1;
+    if (vec2.size() == 9 && *ite == 9)
+        std::cout << "Tested resize" << std::endl;
+
+    for (int i = 1; i < 6; i++)
+        vec.push_back(i);
+
+    vec.swap(vec2);
+    if (vec.size() == 9 && vec2.size() == 5)
+        std::cout << "Tested swap" << std::endl;
+
+    vec2.clear();
+    if (!vec2.size())
+        std::cout << "Tested clear" << std::endl;
+
+    int test = 1000000;
+    for (int i = 0; i < test; i++)
+        vec2.push_back(i);
+    for (int i = 0; i < test; i++)
+        vec2.pop_back();
 
     gettimeofday(&end, NULL);
     timersub(&end, &start, &diff);
+}
+
+void testMap(void) {
+    ft::map<int, int> mp;
+    struct timeval diff, start, end;
+    gettimeofday(&start, NULL);
+
+    mp[1] = 1;
+    mp[2] = 2;
+    mp[3] = 3;
+    std::cout << "Tested constructor" << std::endl;
+    
+    ft::map<int, int> mp2 = mp;
+    ft::map<int, int>::iterator it = mp2.begin();
+    // int test = 1000000;
+    // for (int i = 0; i < test; i++)
+    //     mp[i] = i;
+    // for (int i = 0; i < test; i++)
+    //     mp.erase(i);
+
+    
+    gettimeofday(&end, NULL);
+    timersub(&end, &start, &diff);
+    std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
 }
 
 // void simpleTest(void) {
@@ -234,9 +258,11 @@ int main() {
     //testStack();
     // testRealStack();
     std::cout << GREEN << "Testing vector . . ." << END << std::endl;
-    testVector();
+    // testVector();
+    // testRealVector();
+    std::cout << GREEN << "Testing map . . ." << END << std::endl;
+    testMap();
     // testRealMap();
-    //testMap();
     //simpleTest();
     return (0);
 }

@@ -202,6 +202,10 @@ public:
 
     iterator insert( iterator pos, const T& value ) {
         //size_type i = static_cast<size_type>(std::distance(begin(), pos));
+        if (pos == end()) {
+            push_back(value);
+            return (iterator(_arr + 1));
+        }
         size_t i = 0;
         iterator it = begin();
         for (; it != pos; it++)
@@ -214,6 +218,11 @@ public:
         if (count == 0)
             return ;
 
+        if (pos == end()) {
+            for (size_t i = 0; i < count; i++)
+                push_back(value);
+            return ;
+        }
         vector<T, Allocator> tmp(pos, end());
         iterator it = tmp.begin();
         iterator ite = tmp.end();
@@ -223,13 +232,17 @@ public:
         for (; it != ite; it++) {
             push_back(*it);
         }
-        erase(tmp.begin(), tmp.end());
+        // erase(tmp.begin(), tmp.end());
     }
 
     template <class InputIt>
     void insert (iterator pos, InputIt first, InputIt last,
                 typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                      InputIt>::type* = NULL) {
+        if (pos == end()) {
+            for (; first != last; first++)
+                push_back(*first);
+        }
         vector<T, Allocator> tmp(pos, end());
         size_type count = 0;
         iterator it1 = first;
@@ -247,6 +260,10 @@ public:
     }
 
     iterator erase( iterator pos ) { //OK
+        if (pos == end()) {
+            pop_back();
+            return (pos);
+        }
         vector<T, Allocator> tmp(pos + 1, end());
         iterator it = tmp.begin();
         iterator ite = tmp.end();

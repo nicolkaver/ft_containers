@@ -88,8 +88,10 @@ public:
 
     map & operator=(const map & rhs) {
         if (this != &rhs) {
-            _treeAllocator.destroy(_rbtree);
-            _treeAllocator.deallocate(_rbtree, 1);
+            if (_rbtree) {
+                _treeAllocator.destroy(_rbtree);
+                _treeAllocator.deallocate(_rbtree, 1);
+            }
             _rbtree = _treeAllocator.allocate(1);
             _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
             _size = rhs._size;
