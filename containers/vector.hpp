@@ -69,6 +69,7 @@ public:
         reserve(other.capacity());
         _size = other.size();
         _allocator = other._allocator;
+        _capacity = other.size();
         for (size_type i = 0; i < size(); i++) {
             _allocator.construct(_arr + i, other._arr[i]);
         }
@@ -158,7 +159,8 @@ public:
 
     size_type size() const { return (_size); }
 
-    size_type max_size() const { return (std::numeric_limits<difference_type>::max()); }
+    size_type max_size() const { return (allocator_type().max_size()); }
+    // size_type max_size() const { return (std::numeric_limits<difference_type>::max()); }
 
     void reserve( size_type new_cap ) { 
         if (new_cap <= capacity())
@@ -185,11 +187,12 @@ public:
                 _allocator.destroy(_arr + i);
         }
         else {
-            reserve(count);
+            //reserve(count);
             for (size_type i = size(); i < count; i++) {
                 push_back(value);
             }
         }
+        _size = count;
     }
 
 // MODIFIERS
@@ -226,7 +229,7 @@ public:
         vector<T, Allocator> tmp(pos, end());
         iterator it = tmp.begin();
         iterator ite = tmp.end();
-        erase(pos, end() - 1);
+        erase(pos, end());
         for (size_type i = 0; i < count; i++)
             push_back(value);
         for (; it != ite; it++) {
@@ -292,6 +295,7 @@ public:
     }
 
     void push_back( const T& value ) {
+        // std::cout << "SIZE: " << _size << std::endl;
         int newCapacity;
         if (size() == capacity() && capacity() > 0)
             newCapacity = capacity() * 2;
@@ -326,15 +330,23 @@ public:
 
     friend bool operator==( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        size_t i = 0;
-        if (lhs.size() != rhs.size())
-            return (false);
-        while (i < lhs.size()) {
-            if (lhs._arr[i] != rhs._arr[i])
+        // size_t i = 0;
+        // if (lhs.size() != rhs.size())
+        //     return (false);
+        // while (i < lhs.size()) {
+        //     if (lhs._arr[i] != rhs._arr[i])
+        //         return false;
+        // }
+        // return true;
+
+
+        size_t i = 0, j = 0;
+        while (i < lhs.size() && j < rhs.size()) {
+            if (lhs._arr[i++] != rhs._arr[j++]) {
                 return false;
         }
-        return true;
-
+        }
+        return i == lhs.size() && j == rhs.size();
 
         //return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
@@ -346,11 +358,11 @@ public:
 
     friend bool operator<( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        size_t i = 0;
-        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-            i++;
-        return (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
-        // return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+        // size_t i = 0;
+        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+        //     i++;
+        // return (i != rhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
+        return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
     }
 
     friend bool operator<=( const vector<T,Allocator>& lhs,
@@ -365,21 +377,21 @@ public:
 
     friend bool operator>( const vector<T,Allocator>& lhs,
                 const vector<T,Allocator>& rhs ) {
-        // size_t i = 0;
-        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-        //     i++;
-        // return (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
-        return (rhs < lhs);
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i]));
+        // return (rhs < lhs);
     }
 
     friend bool operator>=( const vector<T,Allocator>& lhs,
                  const vector<T,Allocator>& rhs ) {
-        // size_t i = 0;
-        // while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
-        //     i++;
-        // return ((i == lhs.size() && i == rhs.size()) ||
-        //         (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
-        return (!(lhs < rhs));
+        size_t i = 0;
+        while (i < lhs.size() && i < rhs.size() && lhs._arr[i] == rhs._arr[i])
+            i++;
+        return ((i == lhs.size() && i == rhs.size()) ||
+                (i != lhs.size() && (i == rhs.size() || rhs._arr[i] < lhs._arr[i])));
+        // return (!(lhs < rhs));
     }
 
     friend void swap( vector<T, Allocator> & lhs, vector<T, Allocator> & rhs ) { 

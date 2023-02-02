@@ -158,8 +158,8 @@ public:
         while (parent && node == parent->left) {
             node = parent;
             parent = parent->parent;       
-        return (parent);
         }
+        return (parent);
     }
 
 

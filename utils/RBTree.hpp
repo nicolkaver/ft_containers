@@ -162,6 +162,7 @@ public:
 iterator lower_bound(key_value const & key) {
     Node* tmp = _root;
     Node* ret = _endNode;
+
     while (tmp && tmp != _bottomNode) {
         if (key <= tmp->data.first) {
             ret = tmp;
@@ -190,7 +191,7 @@ const_iterator lower_bound(key_value const & key) const {
 iterator upper_bound(key_value const & key) { // A VERIFIER !!!
     Node* tmp = _root;
     Node* ret = _endNode;
-    while (tmp) {
+    while (tmp && tmp != _bottomNode) {
         if (key < tmp->data.first) {
             ret = tmp;
             tmp = tmp->left;
@@ -204,7 +205,7 @@ iterator upper_bound(key_value const & key) { // A VERIFIER !!!
 const_iterator upper_bound(key_value const & key) const { // A VERIFIER !!!
     Node* tmp = _root;
     Node* ret = _endNode;
-    while (tmp) {
+    while (tmp && tmp != _bottomNode) {
         if (key < tmp->data.first) {
             ret = tmp;
             tmp = tmp->left;
