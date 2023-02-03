@@ -11,6 +11,7 @@
 # include "../utils/TypeTraits.hpp"
 # include "../utils/algorithm.hpp"
 # include "../utils/IteratorTraits.hpp"
+// # include "../utils/constRAIterator.hpp"
 
 namespace ft {
 template<class T, class Allocator = std::allocator<T> >
@@ -26,7 +27,8 @@ public:
 	typedef typename Allocator::const_pointer		const_pointer;
     
     typedef ft::RandomAccessIterator<T> iterator;
-    typedef ft::RandomAccessIterator<const T> const_iterator;
+    // typedef ft::constRAIterator<T> const_iterator;
+    typedef ft::RandomAccessIterator<T> const const_iterator;
     typedef ft::ReverseIterator<T> reverse_iterator;
     typedef ft::ReverseIterator<const T> const_reverse_iterator;
 
@@ -302,7 +304,7 @@ public:
         else
             newCapacity = 1;
         reserve(newCapacity);
-        _allocator.construct(_arr + _size, value);
+	_allocator.construct(_arr + _size, value);
         _size++;
     }
 

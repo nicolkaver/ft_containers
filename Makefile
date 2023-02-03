@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 INCLUDES = containers/stack.hpp containers/vector.hpp containers/map.hpp utils/Pair.hpp utils/Node.hpp \
 			utils/algorithm.hpp utils/IteratorTraits.hpp utils/randomAccessIterator.hpp utils/RBTree.hpp \
 			utils/RBTreeIterator.hpp utils/RBTreeReverseIterator.hpp utils/ReverseIterator.hpp utils/TypeTraits.hpp \
-			tester/tester.hpp
+			tester/tester.hpp 
 
 _RED=	$'\033[1;31m
 _GREEN=	$'\033[1;32m

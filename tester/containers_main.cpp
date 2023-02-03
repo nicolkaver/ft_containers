@@ -40,40 +40,6 @@ void testStack(void) {
     std::cout << BOLD << "ft::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << END << std::endl;
 }
 
-void testRealStack(void) {
-    struct timeval diff, start, end;
-    std::stack<int> st;
-    gettimeofday(&start, NULL);
-
-    st.push(21);
-    st.push(22);
-    st.push(24);
-    st.push(25);
-    int num = 26;
-    st.push(num);
-    std::stack<int> st2;
-    st2 = st;
-    if (st.size() == st2.size()) {
-        while (!st.empty())
-            st.pop();
-    }
-    st.push(1);
-    if (st2 > st) {
-        while (!st2.empty())
-            st2.pop();
-    }
-
-    int test = 1000000;
-    for (int i = 0; i < test; i++)
-        st.push(i);
-    for (int i = 0; i < test; i++)
-        st.pop();
-
-    gettimeofday(&end, NULL);
-    timersub(&end, &start, &diff);
-    std::cout << BOLD << "std::stack: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << END << std::endl;
-}
-
 void testVector(void) {
     ft::vector<int> vec;
     std::cout << "Constructor worked" << std::endl;
@@ -141,6 +107,7 @@ void testVector(void) {
     if (!vec2.size())
         std::cout << "Tested clear" << std::endl;
 
+
     int test = 1000000;
     for (int i = 0; i < test; i++)
         vec2.push_back(i);
@@ -152,18 +119,26 @@ void testVector(void) {
 }
 
 void simpleTest(void) {
-    std::map<int, int> mp;
-    for (int i = 3; i < 6; i++)
-        mp[i] = i;
+    ft::map<char,int> mymap;
+  ft::map<char,int>::iterator itlow,itup;
 
-    std::pair<std::map<int, int>::iterator, std::map<int, int>::iterator> ret;
-    ret = mp.equal_range(4);
+  mymap['a']=20;
+  mymap['b']=40;
+  mymap['c']=60;
+  mymap['d']=80;
+  mymap['e']=100;
 
-    std::cout << "lower bound points to: ";
-    std::cout << ret.first->first << " => " << ret.first->second << '\n';
+  itlow=mymap.lower_bound ('b');  // itlow points to b
+  itup=mymap.upper_bound ('d');   // itup points to e (not d!)
 
-    std::cout << "upper bound points to: ";
-    std::cout << ret.second->first << " => " << ret.second->second << '\n';
+//   std::cout << "low : " << itlow->first << '\n';
+//   std::cout << "up : " << itup->first << '\n';
+
+  mymap.erase(itlow,itup);        // erases [itlow,itup)
+
+//   print content:
+//   for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+//     std::cout << it->first << " => " << it->second << '\n';
 }
 
 int main() {
@@ -175,8 +150,8 @@ int main() {
     // testVector();
     // testRealVector();
     std::cout << GREEN << "Testing MAP . . ." << END << std::endl;
-    testMap();
+    // testMap();
     // testRealMap();
-    // simpleTest();
+    simpleTest();
     return (0);
 }

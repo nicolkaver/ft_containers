@@ -146,8 +146,9 @@ private:
 
 public:
     void replace(Node* n1, Node* n2) {
-        if (n1->parent == NULL)
+        if (n1->parent == NULL) {
             _root = n2;
+        }
         else if (n1 == n1->parent->left)
             n1->parent->left = n2;
         else
@@ -474,10 +475,10 @@ public:
         //now we connect the copy to the predecessor
             if (tmpParent) {
                 node->parent = tmpParent;
-            if (isLeft)
-                tmpParent->left = node;
-            else
-                tmpParent->right = node;
+                if (isLeft)
+                    tmpParent->left = node;
+                else
+                    tmpParent->right = node;
             }
             if (tmpLeft) {
                 tmpLeft->parent = node;
@@ -492,10 +493,11 @@ public:
         }
         child = node->right == NULL ? node->left : node->right;
         if (node->color == BLACK) {
-            if (child != NULL)
-                node->color = child->color;
-            else
-                node->color = BLACK;
+            node->color = child != NULL ? child->color : 0;
+            // if (child != NULL)
+            //     node->color = child->color;
+            // else
+            //     node->color = BLACK;
             delete_case1(node);
         }
         replace(node, child);

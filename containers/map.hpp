@@ -183,8 +183,9 @@ public:
     void erase (iterator first, iterator last,
                 typename ft::enable_if<!ft::is_integral<iterator>::value,
                                         iterator>::type* = NULL) {
-        while (first != last)
+        while (first != last) {
             erase(first++);
+        }
     }
 
     void swap (map& x) {

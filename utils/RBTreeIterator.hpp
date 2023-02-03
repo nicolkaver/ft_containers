@@ -133,11 +133,13 @@ public:
     // }
 
         Node* getSuccessor(Node* node) {
-        //if (node == NULL)
-        //    return (NULL);
-        Node* parent = node->parent;
-        if (node->right)
+        if (node == NULL)
+           return (NULL);
+        if (node->right != NULL) {
             return (getMinValue(node->right));
+        }
+        else {
+        Node* parent = node->parent;
         // while (node->data > parent->data)
         //         parent = parent->parent;
         while (parent && node == parent->right) {
@@ -145,6 +147,7 @@ public:
             parent = parent->parent;
         }
         return (parent);
+        }
     }
 
     Node* getPredecessor(Node* node) {

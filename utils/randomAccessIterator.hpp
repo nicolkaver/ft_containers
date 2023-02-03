@@ -20,6 +20,7 @@ public:
     RandomAccessIterator(const RandomAccessIterator& other) { *this = other; }
     ~RandomAccessIterator() {}
 
+
     RandomAccessIterator& operator=(const RandomAccessIterator& other) {
         _ptr = other._ptr;
         return *this;

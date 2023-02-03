@@ -72,11 +72,24 @@ void testMap(void) {
         std::cout << "Tested equal_range" << std::endl;
     }
 
-    int test = 1000000;
-    for (int i = 0; i < test; i++)
-        mp[i] = i;
-    for (int i = 0; i < test; i++)
-        mp.erase(i);
+    mp[1] = 1;
+    mp[2] = 2;
+
+
+    ft::map<int, int>::iterator itLow = mp.lower_bound(3);
+    ft::map<int, int>::iterator itUp = mp.upper_bound(3);
+    std::cout << itLow->first << "   " << itUp->first << std::endl;
+    mp.erase(itLow, itUp);
+
+    it = mp.begin();
+    for (; it != mp.end(); it++)
+        std::cout << it->first;
+
+    // int test = 1000000;
+    // for (int i = 0; i < test; i++)
+    //     mp[i] = i;
+    // for (int i = 0; i < test; i++)
+    //     mp.erase(i);
 
     
     gettimeofday(&end, NULL);
