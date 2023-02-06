@@ -67,9 +67,11 @@ void testVector(void) {
     vec2.assign(it, ite);
     ft::vector<int>::reverse_iterator it1 = vec2.rbegin();
     ft::vector<int>::reverse_iterator it2 = vec2.rend();
+    ft::vector<int>::const_iterator iter = vec.begin();
     for (; it1 < it2; it1++)
         ;
-    std::cout << "Tested rbegin" << std::endl << "Tested rend" << std::endl;
+    if (iter == it)
+        std::cout << "Tested rbegin" << std::endl << "Tested rend" << std::endl;
     if (vec2.empty())
         std::cout << "Tested empty" << std::endl;
 
@@ -107,7 +109,6 @@ void testVector(void) {
     if (!vec2.size())
         std::cout << "Tested clear" << std::endl;
 
-
     int test = 1000000;
     for (int i = 0; i < test; i++)
         vec2.push_back(i);
@@ -134,11 +135,26 @@ void simpleTest(void) {
 //   std::cout << "low : " << itlow->first << '\n';
 //   std::cout << "up : " << itup->first << '\n';
 
-  mymap.erase(itlow,itup);        // erases [itlow,itup)
+  mymap.erase(itlow, itup);        // erases [itlow,itup)
+    // std::cout << "LOW: " << itlow->first << std::endl;
+    // itlow++;
+    // ft::map<char, int>::iterator tmp = itlow;
+    // mymap.erase(tmp);
+
+    // std::cout << "LOW: " << itlow->first << std::endl;
+    // tmp = itlow;
+    // itlow++;
+    // mymap.erase(tmp);
+
+    // std::cout << "LOW: " << itlow->first << std::endl;
+    // tmp = itlow;
+    // itlow++;
+    // mymap.erase(tmp);
+
 
 //   print content:
-//   for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
-//     std::cout << it->first << " => " << it->second << '\n';
+  for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
 }
 
 int main() {
@@ -150,8 +166,8 @@ int main() {
     // testVector();
     // testRealVector();
     std::cout << GREEN << "Testing MAP . . ." << END << std::endl;
-    // testMap();
+    testMap();
     // testRealMap();
-    simpleTest();
+    // simpleTest();
     return (0);
 }

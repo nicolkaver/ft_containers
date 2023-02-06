@@ -6,33 +6,38 @@
 # include "Pair.hpp"
 # include "TypeTraits.hpp"
 # include "RBTree.hpp"
+# include "IteratorTraits.hpp"
 
 namespace ft {
-template<typename T, typename U>
-class RBTreeIterator {
-public:
+template<typename T, typename U, bool isconst = false>
+struct RBTreeIterator {
     typedef std::bidirectional_iterator_tag iterator_category;
     typedef std::ptrdiff_t difference_type;
 
     typedef T value_type;
-    typedef value_type* pointer;
-    typedef value_type& reference;
+    typedef typename choose_type<isconst, const T&, T&>::type  reference;
+    typedef typename choose_type<isconst, const T*, T*>::type  pointer;
+    typedef typename choose_type<isconst, const U, U>::type nodeptr;
+
+    // typedef value_type* pointer;
+    // typedef value_type& reference;
 
     typedef U Node;
 
     RBTreeIterator(): _ptr(NULL) {}
     RBTreeIterator(Node* ptr): _ptr(ptr) {}
-    RBTreeIterator(RBTreeIterator const & src): _ptr(src._ptr) {}
-    ~RBTreeIterator() {}
+    RBTreeIterator(RBTreeIterator<T, U, false> const & src): _ptr(src._ptr) {}
+    RBTreeIterator(RBTreeIterator<T, U, true> const & src): _ptr(src._ptr) {}
+    virtual ~RBTreeIterator() {}
 
-    RBTreeIterator & operator=(RBTreeIterator const & rhs) {
+    RBTreeIterator & operator=(RBTreeIterator<T, U, isconst> const & rhs) {
         if (this != &rhs)
             this->_ptr = rhs._ptr;
         return (*this);
     }
 
-    template <typename T1, typename U1>
-    RBTreeIterator(const RBTreeIterator<T1, U1>& other) : _ptr(other.getPtr()){};
+    // template <typename T1, typename U1, iconst>
+    // RBTreeIterator(const RBTreeIterator<T1, U1>& other) : _ptr(other.getPtr()){};
 
     Node* getPtr(void) const { return (_ptr); }
 
@@ -133,8 +138,8 @@ public:
     // }
 
         Node* getSuccessor(Node* node) {
-        if (node == NULL)
-           return (NULL);
+        // if (node == NULL)
+        //    return (NULL);
         if (node->right != NULL) {
             return (getMinValue(node->right));
         }
@@ -165,9 +170,8 @@ public:
         return (parent);
     }
 
-
-private:
     Node* _ptr;
+    // nodeptr _ptr;
 };
 
 

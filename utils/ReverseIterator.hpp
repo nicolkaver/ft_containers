@@ -2,21 +2,23 @@
 # define REVERSE_ITERATOR_HPP
 
 # include <iostream>
+# include <cstddef>
+# include "IteratorTraits.hpp"
 
 namespace ft {
-template<typename T>
+template<typename Iter>
 class ReverseIterator {
 public:
-    typedef typename std::random_access_iterator_tag iterator_category;
-    typedef T value_type;
-    typedef std::ptrdiff_t difference_type;
-    typedef T* pointer;
-    typedef const T* const_pointer;
-    typedef T& reference;
-    typedef const T& const_reference;
+    typedef Iter iterator_type;
+
+    typedef typename iterator_traits<iterator_type>::iterator_category iterator_category;
+    typedef typename iterator_traits<iterator_type>::value_type value_type;
+    typedef typename iterator_traits<iterator_type>::pointer pointer;
+    typedef typename iterator_traits<iterator_type>::reference reference;
+    typedef typename iterator_traits<iterator_type>::difference_type difference_type;
 
     ReverseIterator() : _ptr(NULL){};
-    ReverseIterator(pointer ptr) : _ptr(ptr){};
+    ReverseIterator(iterator_type const ptr) : _ptr(ptr){};
     ReverseIterator(const ReverseIterator& src) { *this = src; };
 
     ReverseIterator& operator=(const ReverseIterator& src) {
@@ -25,10 +27,14 @@ public:
     }
 
     reference operator*() { return *_ptr; }
-    pointer operator->() { return _ptr; }
+    // pointer operator->() { return _ptr; }
+    pointer operator->() {
+        iterator_type tmp = _ptr;
+        return &*--tmp;
+    }
 
-    const_reference operator*() const { return *_ptr; }
-    const_pointer operator->() const { return _ptr; }
+    // const_reference operator*() const { return *_ptr; }
+    // const_pointer operator->() const { return _ptr; }
 
     ReverseIterator operator++() {
         --_ptr;
@@ -110,7 +116,7 @@ public:
     }
 
 private:
-  pointer _ptr;
+  iterator_type _ptr;
 
   };
 

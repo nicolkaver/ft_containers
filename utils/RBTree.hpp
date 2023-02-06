@@ -4,7 +4,8 @@
 # include <iostream>
 # include "Node.hpp"
 # include "RBTreeIterator.hpp"
-# include "RBTreeReverseIterator.hpp"
+# include "ReverseIterator.hpp"
+// # include "RBTreeReverseIterator.hpp"
 # include "TypeTraits.hpp"
 # include "IteratorTraits.hpp"
 # include "Pair.hpp"
@@ -15,11 +16,14 @@
 // help: https://github.com/Bibeknam/algorithmtutorprograms/blob/master/data-structures/red-black-trees/RedBlackTree.cpp
 
 namespace ft {
-template<typename T, typename U>
-class RBTreeIterator;
+// template<typename T, typename U, bool isconst = false>
+// struct RBTreeIterator;
 
-template<typename T, typename U>
-class RBTreeReverseIterator;
+// template<typename T, typename U>
+// class RBTreeReverseIterator;
+
+template<typename Iter>
+class ReverseIterator;
 
 template<typename T, typename Compare, typename Allocator>
 class RBTree {
@@ -29,9 +33,14 @@ public:
     typedef typename value_type::first_type key_value;
 
     typedef ft::RBTreeIterator<T, Node> iterator;
-    typedef ft::RBTreeIterator<const T, const Node> const_iterator;
-    typedef ft::RBTreeReverseIterator<T, Node> reverse_iterator;
-    typedef ft::RBTreeReverseIterator<const T, const Node> const_reverse_iterator;
+    typedef ft::RBTreeIterator<T,Node, true> const_iterator;
+    // typedef ft::RBTreeIterator<const T, const Node> const_iterator;
+    typedef ft::ReverseIterator<iterator> reverse_iterator;
+    typedef ft::ReverseIterator<const_iterator> const_reverse_iterator;
+    // typedef ft::RBTreeReverseIterator<iterator> reverse_iterator;
+    // typedef ft::RBTreeReverseIterator<const_iterator> const_reverse_iterator;
+    // typedef ft::RBTreeReverseIterator<T, Node> reverse_iterator;
+    // typedef ft::RBTreeReverseIterator<const T, const Node> const_reverse_iterator;
 
     typedef Allocator allocator_type;
     typedef typename allocator_type::template rebind<Node>::other node_allocator; //custom memory allocator; will allocate Node
@@ -149,10 +158,12 @@ public:
         if (n1->parent == NULL) {
             _root = n2;
         }
-        else if (n1 == n1->parent->left)
-            n1->parent->left = n2;
-        else
-            n1->parent->right = n2;
+        else {
+            if (n1 == n1->parent->left)
+                n1->parent->left = n2;
+            else
+                n1->parent->right = n2;
+        }
         if (n2 != NULL)
             n2->parent = n1->parent;
     }
@@ -225,29 +236,33 @@ iterator end() { return (iterator(_endNode)); }
 
 const_iterator end() const { return (const_iterator(_endNode)); }
 
-reverse_iterator rbegin() { //continue
-    if (_root == NULL)
-        return (reverse_iterator(_bottomNode));
-    else {
-        reverse_iterator it = _endNode;
-        it++;
-        return (it);
-    }
-}
+// reverse_iterator rbegin() { //continue
+//     if (_root == NULL)
+//         return (reverse_iterator(_bottomNode));
+//     else {
+//         reverse_iterator it(_endNode);
+//         it++;
+//         return (it);
+//     }
+// }
 
-const_reverse_iterator rbegin() const { //continue
-    if (_root == NULL)
-        return (cosnt_reverse_iterator(_bottomNode));
-    else {
-        const_reverse_iterator it = _endNode;
-        it++;
-        return (it);
-    }
-}
+reverse_iterator rbegin() { return (reverse_iterator(end())); }
 
-reverse_iterator rend() { return (reverse_iterator(_bottomNode)); }
+// const_reverse_iterator rbegin() const { //continue
+//     if (_root == NULL)
+//         return (cosnt_reverse_iterator(_bottomNode));
+//     else {
+//         const_reverse_iterator it(_endNode);
+//         it++;
+//         return (it);
+//     }
+// }
 
-//const_reverse_iterator rend() { return (const_reverse_iterator(_bottomNode())); }
+const_reverse_iterator rbegin() const { return (const_reverse_iterator(end())); }
+
+reverse_iterator rend() { return (reverse_iterator(begin())); }
+
+const_reverse_iterator rend() const { return (const_reverse_iterator(begin())); }
 
 // CLEAR
 
@@ -259,7 +274,7 @@ public:
 
 private:
     void clear2(Node* node) {
-        if (node == NULL || node == _bottomNode || node == _endNode)
+        if (node == NULL || node == _bottomNode) //|| node == _endNode)
             return ;
         else {
             clear2(node->left);
@@ -443,7 +458,8 @@ Node* clone(Node* curr, Node* parent, Node* bottom) {
 }
 
 // DELETIONS
-//https://codingdiksha.com/cpp-program-implement-red-black-tree/
+// https://codingdiksha.com/cpp-program-implement-red-black-tree/
+// https://github.com/prasanthmadhavan/Red-Black-Tree/blob/master/rbtree.c
 
 public:
     void deleteNode(key_value const & key) {
@@ -457,6 +473,7 @@ public:
         Node* node = searchHelper(_root, key);
         if (node == NULL)
             return ;
+        // Node* node = clone(searchHelper(_root, key), searchHelper(_root, key)->parent, _bottomNode);
         if (node->left != NULL && node->right != NULL) {
             Node* pred = getMax(node->left);
             bool isLeft = false;
@@ -469,8 +486,8 @@ public:
             Node* tmpLeft = node->left;
             int tmpColor = node->color;
             _nodeAllocator.destroy(node);
-            _nodeAllocator.deallocate(node, 1);
-            node = _nodeAllocator.allocate(1);
+            // _nodeAllocator.deallocate(node, 1);
+            // node = _nodeAllocator.allocate(1);
             _nodeAllocator.construct(node, Node(pred->data));
         //now we connect the copy to the predecessor
             if (tmpParent) {
@@ -491,19 +508,26 @@ public:
             node->color = tmpColor;
             node = pred;
         }
-        child = node->right == NULL ? node->left : node->right;
+        // child = node->right == NULL ? node->left : node->right;
+        if (node->right == NULL)
+            child = node->left;
+        else
+            child = node->right;
         if (node->color == BLACK) {
-            node->color = child != NULL ? child->color : 0;
-            // if (child != NULL)
-            //     node->color = child->color;
-            // else
-            //     node->color = BLACK;
+            // node->color = child != NULL ? child->color : 0;
+            if (child != NULL) {
+                node->color = child->color;
+            }
+            else {
+                node->color = BLACK;
+            }
             delete_case1(node);
+
         }
         replace(node, child);
         _nodeAllocator.destroy(node);
         _nodeAllocator.deallocate(node, 1);
-        if (_root) {
+        if (_root != NULL) {
             _root->parent = _endNode;
             _endNode->left = _root;
             Node *minNode = getMin(_root);
@@ -592,6 +616,8 @@ private:
             rotateRight(node->parent);
         }
     }
+
+
 
 // MIN AND MAX
 

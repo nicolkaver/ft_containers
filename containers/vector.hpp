@@ -27,10 +27,9 @@ public:
 	typedef typename Allocator::const_pointer		const_pointer;
     
     typedef ft::RandomAccessIterator<T> iterator;
-    // typedef ft::constRAIterator<T> const_iterator;
-    typedef ft::RandomAccessIterator<T> const const_iterator;
-    typedef ft::ReverseIterator<T> reverse_iterator;
-    typedef ft::ReverseIterator<const T> const_reverse_iterator;
+    typedef ft::RandomAccessIterator<T, true> const_iterator;
+    typedef ft::ReverseIterator<iterator> reverse_iterator;
+    typedef ft::ReverseIterator<const_iterator> const_reverse_iterator;
 
     vector(void): _arr(NULL), _size(0), _capacity(0) {};
     explicit vector (const allocator_type& alloc): _arr(NULL), _size(0), _capacity(0), _allocator(alloc) {}
@@ -147,13 +146,21 @@ public:
 
     const_iterator end() const { return (const_iterator(_arr + _size)); }
 
-    reverse_iterator rbegin() { return (reverse_iterator(_arr + _size - 1)); }
+    reverse_iterator rbegin() { return (reverse_iterator(end())); }
 
-    const_reverse_iterator rbegin() const { return (const_reverse_iterator(_arr + _size - 1)); }
+    // reverse_iterator rbegin() { return (reverse_iterator(_arr + _size - 1)); }
 
-    reverse_iterator rend() { return (reverse_iterator(_arr - 1)); }
+    // const_reverse_iterator rbegin() const { return (const_reverse_iterator(_arr + _size - 1)); }
 
-    const_reverse_iterator rend() const { return (const_reverse_iterator(_arr - 1)); }
+    const_reverse_iterator rbegin() const { return (const_reverse_iterator(end())); }
+
+    // reverse_iterator rend() { return (reverse_iterator(_arr - 1)); }
+
+    reverse_iterator rend() { return (reverse_iterator(begin())); }
+
+    // const_reverse_iterator rend() const { return (const_reverse_iterator(_arr - 1)); }
+
+    const_reverse_iterator rend() const { return (const_reverse_iterator(begin())); }
 
 // CAPACITY
 

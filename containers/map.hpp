@@ -13,6 +13,10 @@
 # include "../utils/IteratorTraits.hpp"
 
 namespace ft {
+
+template<typename Iter>
+class ReverseIterator;
+
 template<typename Key, typename T, class Compare = std::less<Key>,
     class Allocator = std::allocator<ft::pair<const Key, T> > >
 class map {
@@ -105,21 +109,21 @@ public:
     }
 
 //ITERATORS
-    iterator begin() { return (_rbtree->begin()); }
+    iterator begin() { return (iterator(_rbtree->begin())); }
 
-    const_iterator begin() const { return (_rbtree->begin()); }
+    const_iterator begin() const { return (const_iterator(_rbtree->begin())); }
 
-    iterator end() { return (_rbtree->end()); }
+    iterator end() { return (iterator(_rbtree->end())); }
 
-    const_iterator end() const { return (_rbtree->end()); }
+    const_iterator end() const { return (const_iterator(_rbtree->end())); }
 
-    reverse_iterator rbegin() { return (_rbtree->rbegin()); }
+    reverse_iterator rbegin() { return (reverse_iterator(_rbtree->rbegin())); }
     
-    const_reverse_iterator rbegin() const { return (_rbtree->rbegin()); }
+    const_reverse_iterator rbegin() const { return (const_reverse_iterator(_rbtree->rbegin())); }
 
-    reverse_iterator rend() { return (_rbtree->rend()); }
+    reverse_iterator rend() { return (reverse_iterator(_rbtree->rend())); }
 
-    const_reverse_iterator rend() const { return (_rbtree->rend()); }
+    const_reverse_iterator rend() const { return (const_reverse_iterator(_rbtree->rend())); }
 
 //CAPACITY
 
@@ -184,7 +188,9 @@ public:
                 typename ft::enable_if<!ft::is_integral<iterator>::value,
                                         iterator>::type* = NULL) {
         while (first != last) {
-            erase(first++);
+            iterator tmp = first;
+            first++;
+            erase(tmp);
         }
     }
 
@@ -247,12 +253,16 @@ public:
 
 // OBSERVERS
 
-    key_compare key_comp() const { return (_compare); }
+    // key_compare key_comp() const { return (_compare); }
 
-    value_compare value_comp() const {
-        return (value_compare(key_compare()));
+    // value_compare value_comp() const {
+    //     return (value_compare(key_compare()));
         // return (ft::map<key_value, mapped_type>::value_compare::comp);
-    }
+    // }
+
+    key_compare key_comp() const { return key_compare(); }
+    value_compare value_comp() const { return value_compare(key_compare()); }
+
 
 // ELEMENT ACCESS
 

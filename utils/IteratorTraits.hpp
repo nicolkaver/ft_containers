@@ -34,6 +34,19 @@ public:
     typedef std::random_access_iterator_tag iterator_category;
 };
 
+template <bool flag, class const_type, class normal_type>
+struct choose_type;
+
+template <class const_type, class normal_type>
+struct choose_type<true, const_type, normal_type> {
+    typedef const_type type;
+};
+
+template <class const_type, class normal_type>
+struct choose_type<false, const_type, normal_type> {
+    typedef normal_type type;
+};
+
 } // namespace ft
 
 #endif
