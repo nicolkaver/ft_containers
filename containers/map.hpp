@@ -26,30 +26,18 @@ public:
     typedef ft::pair<const Key, T> value_type;
     typedef Compare key_compare;
     
-    // class value_compare {
-    //     friend class map;
-    // protected:
-    //     key_compare comp;
-    //     value_compare (key_compare c) : comp(c) {}
-    // public:
-    //     bool operator() (const value_type& x, const value_type& y) const {
-    //         return comp(x.first, y.first);
-    //     }
-    //     // ~value_compare();
-    // };
-
     class value_compare {
-    protected:
-        key_compare comp;
-
+        friend class map;
     public:
+        value_compare(key_compare c) : comp(c){}
+
+        ~value_compare() {}
+
+        key_compare comp;
+    
         bool operator()(const value_type& lhs, const value_type& rhs) const {
             return comp(lhs.first, rhs.first);
         }
-        ~value_compare();
-
-    protected:
-        value_compare(key_compare c) : comp(c){};
   };
 
     typedef Allocator allocator_type;
@@ -109,9 +97,9 @@ public:
         if (this != &rhs) {
             if (_rbtree) {
                 _treeAllocator.destroy(_rbtree);
-                _treeAllocator.deallocate(_rbtree, 1);
+                // _treeAllocator.deallocate(_rbtree, 1);
             }
-            _rbtree = _treeAllocator.allocate(1);
+            // _rbtree = _treeAllocator.allocate(1);
             _treeAllocator.construct(_rbtree, RBTree<value_type, key_compare, allocator_type>());
             _size = rhs._size;
             _compare = rhs._compare;
@@ -210,21 +198,12 @@ public:
 
     void swap (map& x) {
         size_type swapSize = _size;
-        key_compare swapCompare = _compare;
-        allocator_type swapAllocator = _allocator;
-        treeAllocator swapTreeAllocator = _treeAllocator;
         RBTree<value_type, key_compare, allocator_type>* swapRBTree = _rbtree;
 
         _size = x._size;
-        _compare = x._compare;
-        _allocator = x._allocator;
-        _treeAllocator = x._treeAllocator;
         _rbtree = x._rbtree;
 
         x._size = swapSize;
-        x._compare = swapCompare;
-        x._allocator = swapAllocator;
-        x._treeAllocator = swapTreeAllocator;
         x._rbtree = swapRBTree;
     }
 
@@ -270,13 +249,7 @@ public:
 
     key_compare key_comp() const { return (_compare); }
 
-    value_compare value_comp() const {
-        return (value_compare(key_compare()));
-        return (ft::map<key_value, mapped_type>::value_compare::comp);
-    }
-
-    // key_compare key_comp() const { return key_compare(); }
-    // value_compare value_comp() const { return value_compare(key_compare()); }
+    value_compare value_comp() const { return (value_compare(_compare)); }
 
 
 // ELEMENT ACCESS
@@ -349,7 +322,6 @@ private:
     RBTree<value_type, key_compare, allocator_type>* _rbtree;
 
 };
-
 
 } //namespace ft
 

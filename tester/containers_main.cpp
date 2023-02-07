@@ -120,41 +120,22 @@ void testVector(void) {
 }
 
 void simpleTest(void) {
-    ft::map<char,int> mymap;
-  ft::map<char,int>::iterator itlow,itup;
+    ft::map<int, int> m1;
+    ft::map<int, int> m2;
 
-  mymap['a']=20;
-  mymap['b']=40;
-  mymap['c']=60;
-  mymap['d']=80;
-  mymap['e']=100;
+    for (int i = 0; i < 3; i++)
+        m1[i] = i;
 
-  itlow=mymap.lower_bound ('b');  // itlow points to b
-  itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+    for (int i = 3; i < 6; i++)
+        m2[i] = i;
 
-//   std::cout << "low : " << itlow->first << '\n';
-//   std::cout << "up : " << itup->first << '\n';
+    ft::map<int, int>::iterator it = m1.begin();
+    ft::map<int, int>::iterator ite = m2.begin();
 
-  mymap.erase(itlow, itup);        // erases [itlow,itup)
-    // std::cout << "LOW: " << itlow->first << std::endl;
-    // itlow++;
-    // ft::map<char, int>::iterator tmp = itlow;
-    // mymap.erase(tmp);
+    m1.swap(m2);
 
-    // std::cout << "LOW: " << itlow->first << std::endl;
-    // tmp = itlow;
-    // itlow++;
-    // mymap.erase(tmp);
-
-    // std::cout << "LOW: " << itlow->first << std::endl;
-    // tmp = itlow;
-    // itlow++;
-    // mymap.erase(tmp);
-
-
-//   print content:
-  for (ft::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
-    std::cout << it->first << " => " << it->second << '\n';
+    for (; it != m2.end(); it++)
+        std::cout << it->first << std::endl;
 }
 
 int main() {
@@ -166,8 +147,8 @@ int main() {
     // testVector();
     // testRealVector();
     std::cout << GREEN << "Testing MAP . . ." << END << std::endl;
-    testMap();
+    // testMap();
     // testRealMap();
-    // simpleTest();
+    simpleTest();
     return (0);
 }

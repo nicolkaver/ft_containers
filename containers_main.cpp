@@ -229,28 +229,24 @@ void testMap(void) {
     std::cout << "ft::map: " << diff.tv_sec << "." << diff.tv_usec << " seconds" << std::endl;
 }
 
-// void simpleTest(void) {
-//     std::cout << "FT:\n";//testVector();
-//     ft::vector<int> vec1;
-//     ft::vector<int> vec2;
-//     vec1.push_back(1);
-//     vec2.push_back(2);
-//     if (vec1 <= vec2)
-//         std::cout << "LOL\n";
-//     else
-//         std::cout << "LALA\n";
-    
-//     std::cout << "STD:\n";
-//     std::vector<int> vec3;
-//     std::vector<int> vec4;
-//     vec3.push_back(1);
-//     vec4.push_back(2);
-//     if (vec3 <= vec4)
-//         std::cout << "LOL\n";
-//     else
-//         std::cout << "LALA\n";
+void simpleTest(void) {
+    ft::map<int, int> m1;
+    ft::map<int, int> m2;
 
-// }
+    for (int i = 0; i < 3; i++)
+        m1.[i] = i;
+
+    for (int i = 3; i < 6; i++)
+        m2.[i] = i;
+
+    ft::map<int, int>::iterator it = m1.begin();
+    ft::map<int, int>::iterator ite = m2.begin();
+
+    m1.swap(m2);
+
+    for (; it != m1.end(); it++)
+        std::cout << it->first << std::endl;
+}
 
 int main() {
 
@@ -261,8 +257,8 @@ int main() {
     // testVector();
     // testRealVector();
     std::cout << GREEN << "Testing map . . ." << END << std::endl;
-    testMap();
+    // testMap();
     // testRealMap();
-    //simpleTest();
+    // simpleTest();
     return (0);
 }
