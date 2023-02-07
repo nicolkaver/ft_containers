@@ -85,6 +85,11 @@ void testMap(void) {
     for (; it != mp.end(); it++)
         std::cout << it->first;
 
+    it = mp.begin();
+    ft::map<int, int>::const_iterator iter = mp.begin();
+    if (it == mp.begin())
+        std::cout << "LOLILOL\n";
+
     // int test = 1000000;
     // for (int i = 0; i < test; i++)
     //     mp[i] = i;

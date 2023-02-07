@@ -26,17 +26,31 @@ public:
     typedef ft::pair<const Key, T> value_type;
     typedef Compare key_compare;
     
+    // class value_compare {
+    //     friend class map;
+    // protected:
+    //     key_compare comp;
+    //     value_compare (key_compare c) : comp(c) {}
+    // public:
+    //     bool operator() (const value_type& x, const value_type& y) const {
+    //         return comp(x.first, y.first);
+    //     }
+    //     // ~value_compare();
+    // };
+
     class value_compare {
-        friend class map;
     protected:
         key_compare comp;
-        value_compare (key_compare c) : comp(c) {}
+
     public:
-        bool operator() (const value_type& x, const value_type& y) const {
-            return comp(x.first, y.first);
+        bool operator()(const value_type& lhs, const value_type& rhs) const {
+            return comp(lhs.first, rhs.first);
         }
-        // ~value_compare();
-    };
+        ~value_compare();
+
+    protected:
+        value_compare(key_compare c) : comp(c){};
+  };
 
     typedef Allocator allocator_type;
     typedef typename allocator_type::reference reference;
@@ -214,6 +228,7 @@ public:
         x._rbtree = swapRBTree;
     }
 
+
 // LOOKUP
 
     size_type count (const key_value& k) const {
@@ -253,15 +268,15 @@ public:
 
 // OBSERVERS
 
-    // key_compare key_comp() const { return (_compare); }
+    key_compare key_comp() const { return (_compare); }
 
-    // value_compare value_comp() const {
-    //     return (value_compare(key_compare()));
-        // return (ft::map<key_value, mapped_type>::value_compare::comp);
-    // }
+    value_compare value_comp() const {
+        return (value_compare(key_compare()));
+        return (ft::map<key_value, mapped_type>::value_compare::comp);
+    }
 
-    key_compare key_comp() const { return key_compare(); }
-    value_compare value_comp() const { return value_compare(key_compare()); }
+    // key_compare key_comp() const { return key_compare(); }
+    // value_compare value_comp() const { return value_compare(key_compare()); }
 
 
 // ELEMENT ACCESS

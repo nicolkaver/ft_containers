@@ -18,23 +18,30 @@ public:
     typedef typename iterator_traits<iterator_type>::difference_type difference_type;
 
     ReverseIterator() : _ptr(NULL){};
-    ReverseIterator(iterator_type const ptr) : _ptr(ptr){};
+    ReverseIterator(iterator_type const ptr): _ptr(ptr){};
+
+    template <typename It>
+    ReverseIterator(const ReverseIterator<It> &copy) : _ptr(copy.getPtr()) {}
+
     ReverseIterator(const ReverseIterator& src) { *this = src; };
 
-    ReverseIterator& operator=(const ReverseIterator& src) {
+    template<class It>
+    ReverseIterator& operator=(const ReverseIterator<It>& src) {
         _ptr = src._ptr;
         return (*this);
     }
 
-    reference operator*() { return *_ptr; }
-    // pointer operator->() { return _ptr; }
+    reference operator*() {
+        iterator_type tmp = _ptr;
+        return (*--tmp);
+    }
+
     pointer operator->() {
         iterator_type tmp = _ptr;
         return &*--tmp;
     }
 
-    // const_reference operator*() const { return *_ptr; }
-    // const_pointer operator->() const { return _ptr; }
+    iterator_type getPtr() const { return (_ptr); }
 
     ReverseIterator operator++() {
         --_ptr;
@@ -85,35 +92,54 @@ public:
         return rhs._ptr - lhs._ptr;
     }
 
-    friend bool operator==(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-        return lhs._ptr == rhs._ptr;
-    }
+    // friend bool operator==(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    //     return lhs._ptr == rhs._ptr;
+    // }
 
-    friend bool operator!=(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-        return lhs._ptr != rhs._ptr;
-    }
+    // friend bool operator!=(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    //     return lhs._ptr != rhs._ptr;
+    // }
 
-    friend bool operator>(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-        return lhs._ptr < rhs._ptr;
-    }
+    // friend bool operator>(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    //     return lhs._ptr < rhs._ptr;
+    // }
 
-    friend bool operator>=(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-        return lhs._ptr <= rhs._ptr;
-    }
+    // friend bool operator>=(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    //     return lhs._ptr <= rhs._ptr;
+    // }
 
-    friend bool operator<(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-    return lhs._ptr > rhs._ptr;
-    }
+    // friend bool operator<(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    // return lhs._ptr > rhs._ptr;
+    // }
 
-    friend bool operator<=(const ReverseIterator& lhs,
-                            const ReverseIterator& rhs) {
-        return lhs._ptr >= rhs._ptr;
-    }
+    // friend bool operator<=(const ReverseIterator& lhs,
+    //                         const ReverseIterator& rhs) {
+    //     return lhs._ptr >= rhs._ptr;
+        // }
+
+    template <class It>
+    bool	operator==(const ReverseIterator<It> &rhs) const { return _ptr == rhs.getPtr(); }
+
+    template <class It>
+    bool	operator!=(const ReverseIterator<It> &rhs) const { return _ptr != rhs.getPtr(); }
+
+    template <class It>
+    bool	operator<(const ReverseIterator<It> &rhs) const { return _ptr > rhs.getPtr(); }
+
+    template <class It>
+    bool	operator>(const ReverseIterator<It> &rhs) const { return _ptr < rhs.getPtr(); };
+
+    template <class It>
+    bool	operator<=(const ReverseIterator<It> &rhs) const { return _ptr >= rhs.getPtr(); };
+
+    template <class It>
+    bool	operator>=(const ReverseIterator<It> &rhs) const { return _ptr <= rhs.getPtr(); };
+
 
 private:
   iterator_type _ptr;
