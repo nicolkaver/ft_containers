@@ -11,7 +11,6 @@
 # include "../utils/TypeTraits.hpp"
 # include "../utils/algorithm.hpp"
 # include "../utils/IteratorTraits.hpp"
-// # include "../utils/constRAIterator.hpp"
 
 namespace ft {
 template<class T, class Allocator = std::allocator<T> >
@@ -50,11 +49,15 @@ public:
             typename ft::enable_if<!ft::is_integral<InputIt>::value,
                                     InputIt>::type* = NULL)
         : _arr(NULL), _size(0), _capacity(0), _allocator(alloc) {
-        difference_type range = last - first;
+        InputIt tmp = first;
+        int range = 0;
+        for (; tmp != last; tmp++)
+            range++;
+        // difference_type range = last - first;
         reserve(range);
         _size = range;
         for (size_type i = 0; i < size(); i++) {
-            _allocator.construct(_arr + i, *(first++));
+            _allocator.construct(&_arr[i], *(first++));
         }
     }
 
@@ -66,15 +69,23 @@ public:
     }
 
     vector & operator=(const vector& other) {
-        clear();
-        reserve(other.capacity());
-        _size = other.size();
-        _allocator = other._allocator;
-        _capacity = other.size();
-        for (size_type i = 0; i < size(); i++) {
-            _allocator.construct(_arr + i, other._arr[i]);
+        if (this != &other) {
+            clear();
+            // reserve(other.capacity());
+            _allocator.deallocate(_arr, _capacity);
+            _size = other.size();
+            _allocator = other._allocator;
+            _capacity = other.capacity();
+            _arr = _allocator.allocate(other.capacity());
+            for (size_type i = 0; i < size(); i++) {
+                _allocator.construct(&_arr[i], other._arr[i]);
+            }
         }
         return (*this);
+        // if (&other == this)
+        //     return *this;
+        // assign(other.begin(), other.end());
+        // return *this;
     }
 
     void assign(size_type count, value_type const & value) {
@@ -148,17 +159,9 @@ public:
 
     reverse_iterator rbegin() { return (reverse_iterator(end())); }
 
-    // reverse_iterator rbegin() { return (reverse_iterator(_arr + _size - 1)); }
-
-    // const_reverse_iterator rbegin() const { return (const_reverse_iterator(_arr + _size - 1)); }
-
     const_reverse_iterator rbegin() const { return (const_reverse_iterator(end())); }
 
-    // reverse_iterator rend() { return (reverse_iterator(_arr - 1)); }
-
     reverse_iterator rend() { return (reverse_iterator(begin())); }
-
-    // const_reverse_iterator rend() const { return (const_reverse_iterator(_arr - 1)); }
 
     const_reverse_iterator rend() const { return (const_reverse_iterator(begin())); }
 
@@ -171,19 +174,21 @@ public:
     size_type max_size() const { return (allocator_type().max_size()); }
     // size_type max_size() const { return (std::numeric_limits<difference_type>::max()); }
 
-    void reserve( size_type new_cap ) { 
-        if (new_cap <= capacity())
-            return ;
-        if (new_cap > max_size())
-            throw std::length_error("Error: New capacity is greater than the container's limit");
-        T* newArray = _allocator.allocate(new_cap);
-        for (size_t i = 0; i < _size; i++) {
-            _allocator.construct(newArray + i, _arr[i]);
-            _allocator.destroy(_arr + i);
+    void reserve( size_type n ) { 
+        if (n > max_size())
+            throw std::length_error("vector::reserve");
+        if (n < _capacity)
+            return;
+
+        value_type *new_container = _allocator.allocate(n);
+
+        for (size_type i = 0; i < _size; i++) {
+            _allocator.construct(&new_container[i], _arr[i]);
+            _allocator.destroy(&_arr[i]);
         }
         _allocator.deallocate(_arr, _capacity);
-        _capacity = new_cap;
-        _arr = newArray;
+        _capacity = n;
+        _arr = new_container;
     }
 
     size_type capacity() const { return (_capacity); }
@@ -191,12 +196,12 @@ public:
     void resize( size_type count, T value = T() ) {
         if (count > max_size())
             throw std::length_error("Error: New capacity is greater than the container's limit");
-        if (count <= size()) {
+        if (count < size()) {
             for (size_type i = count; i < size(); i++)
                 _allocator.destroy(_arr + i);
         }
         else {
-            //reserve(count);
+            reserve(count);
             for (size_type i = size(); i < count; i++) {
                 push_back(value);
             }
@@ -214,14 +219,14 @@ public:
 
     iterator insert( iterator pos, const T& value ) {
         //size_type i = static_cast<size_type>(std::distance(begin(), pos));
-        if (pos == end()) {
-            push_back(value);
-            return (iterator(_arr + 1));
-        }
         size_t i = 0;
         iterator it = begin();
         for (; it != pos; it++)
             i++;
+        if (pos == end()) {
+            push_back(value);
+            return (iterator(_arr + i));
+        }
         insert(pos, 1, value);
         return (iterator(_arr + i));
     }
@@ -304,14 +309,13 @@ public:
     }
 
     void push_back( const T& value ) {
-        // std::cout << "SIZE: " << _size << std::endl;
-        int newCapacity;
         if (size() == capacity() && capacity() > 0)
-            newCapacity = capacity() * 2;
-        else
-            newCapacity = 1;
-        reserve(newCapacity);
-	_allocator.construct(_arr + _size, value);
+            reserve(capacity() * 2);
+        else {
+            if (_capacity == 0)
+                reserve(1);
+        }     
+        _allocator.construct(_arr + _size, value);
         _size++;
     }
 
@@ -405,20 +409,6 @@ public:
 
     friend void swap( vector<T, Allocator> & lhs, vector<T, Allocator> & rhs ) { 
         lhs.swap(rhs);
-        // pointer tmpArr = lhs._arr;
-        // size_type tmpSize = lhs._size;
-        // size_type tmpCapacity = lhs._capacity;
-        // allocator_type tmpAlloc = lhs._allocator;
-
-        // lhs._arr = rhs._arr;
-        // lhs._size = rhs._size;
-        // lhs._capacity = rhs._capacity;
-        // lhs._allocator = rhs._allocator;
-
-        // rhs._allocator = tmpArr;
-        // rhs._size = tmpSize;
-        // rhs._capacity = tmpCapacity;
-        // rhs._allocator = tmpAlloc;
     }
 
 private:

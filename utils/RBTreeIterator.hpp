@@ -121,28 +121,16 @@ namespace ft
             return tmp;
         }
 
-        // Node* getMinValue(Node* node) {
-        //     if (node && node->left)
-        //         node = node->left;
-        //     return (node);
-        // }
-
-        // Node* getMaxValue(Node* node) {
-        //     if (node && node->right)
-        //         node = node->right;
-        //     return (node);
-        // }
-
         nodeptr getMinValue(nodeptr node)
         {
-            if (node && node->left)
+            while (node && node->left)
                 node = node->left;
             return (node);
         }
 
         nodeptr getMaxValue(nodeptr node)
         {
-            if (node && node->right)
+            while (node && node->right)
                 node = node->right;
             return (node);
         }
@@ -188,12 +176,8 @@ namespace ft
 
         nodeptr getSuccessor(nodeptr node)
         {
-            // if (node == NULL)
-            //    return (NULL);
             if (node->right != NULL)
-            {
                 return (getMinValue(node->right));
-            }
             else
             {
                 nodeptr parent = node->parent;
@@ -210,11 +194,10 @@ namespace ft
 
         nodeptr getPredecessor(nodeptr node)
         {
-            // if (node == NULL)
-            //     return (NULL);
             nodeptr parent = node->parent;
-            if (node->left)
+            if (node->left) {
                 return (getMaxValue(node->left));
+            }
             // while (node->data < parent->data)
             //     parent = parent->parent;
             while (parent && node == parent->left)

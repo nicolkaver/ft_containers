@@ -120,22 +120,32 @@ void testVector(void) {
 }
 
 void simpleTest(void) {
-    ft::map<int, int> m1;
-    ft::map<int, int> m2;
-
-    for (int i = 0; i < 3; i++)
-        m1[i] = i;
-
-    for (int i = 3; i < 6; i++)
-        m2[i] = i;
-
-    ft::map<int, int>::iterator it = m1.begin();
-    ft::map<int, int>::iterator ite = m2.begin();
-
-    m1.swap(m2);
-
-    for (; it != m2.end(); it++)
-        std::cout << it->first << std::endl;
+    ft::vector<int> test(65, 7);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(12);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(66);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(128);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(1023);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	test.reserve(10252);
+	std::cout << "s: " << test.size() << ", c: " << test.capacity() << std::endl;
+	try
+	{
+		test.reserve(test.max_size() + 1);
+	}
+	catch(std::length_error &le)
+	{
+		std::cout << "length error" << std::endl;
+	}
+	catch(std::exception &e)
+	{
+		std::cout << "error : " << e.what() << std::endl;
+	}
+    ft::vector<int> test2 = test;
+    std::cout << test2.at(0);
 }
 
 int main() {

@@ -230,22 +230,8 @@ void testMap(void) {
 }
 
 void simpleTest(void) {
-    ft::map<int, int> m1;
-    ft::map<int, int> m2;
-
-    for (int i = 0; i < 3; i++)
-        m1.[i] = i;
-
-    for (int i = 3; i < 6; i++)
-        m2.[i] = i;
-
-    ft::map<int, int>::iterator it = m1.begin();
-    ft::map<int, int>::iterator ite = m2.begin();
-
-    m1.swap(m2);
-
-    for (; it != m1.end(); it++)
-        std::cout << it->first << std::endl;
+    ft::vector<int> vec;
+    std::cout << vec.max_size() << std::endl;
 }
 
 int main() {
@@ -259,6 +245,6 @@ int main() {
     std::cout << GREEN << "Testing map . . ." << END << std::endl;
     // testMap();
     // testRealMap();
-    // simpleTest();
+    simpleTest();
     return (0);
 }
