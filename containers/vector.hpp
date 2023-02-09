@@ -61,7 +61,9 @@ public:
         }
     }
 
-    vector(const vector & src) : _arr(NULL), _size(0), _capacity(0) { *this = src; };
+    vector(const vector & src) : _arr(NULL), _size(0), _capacity(0) { 
+        *this = src;
+    }
 
     ~vector() {
         clear();
@@ -75,43 +77,43 @@ public:
             _allocator.deallocate(_arr, _capacity);
             _size = other.size();
             _allocator = other._allocator;
-            _capacity = other.capacity();
-            _arr = _allocator.allocate(other.capacity());
+            if (!_capacity || _capacity < other._size)
+                _capacity = other.size();
+            else
+                ;
+            // _capacity = other._capacity;
+            _arr = _allocator.allocate(other.size());
+            // _arr = _allocator.allocate(other.capacity());
             for (size_type i = 0; i < size(); i++) {
                 _allocator.construct(&_arr[i], other._arr[i]);
             }
         }
+        // if (this != &other) {
+        //     assign(other.begin(), other.end());
+        // }
         return (*this);
-        // if (&other == this)
-        //     return *this;
-        // assign(other.begin(), other.end());
-        // return *this;
     }
 
-    void assign(size_type count, value_type const & value) {
-        if (count > capacity())
-            reserve(count);
-        for (size_type i = 0; i < count; ++i) {
-            _allocator.construct(_arr + i, value);
-        }
-        _size = count;
-    };
-
-    template <class InputIt>
-    void assign(InputIt first, InputIt last,
-                typename ft::enable_if<!ft::is_integral<InputIt>::value,
-                                    InputIt>::type* = NULL) {
+    template <class InputIterator>
+    void assign (InputIterator first, InputIterator last,
+          typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL) {
+        clear();
+        InputIterator tmp = first;
         size_type count = 0;
-        InputIt tmp = first;
-        InputIt tmp2 = last;
-        for (; tmp != tmp2; tmp++)
+
+        while (tmp != last) {
             count++;
-        if (count > capacity())
-            reserve(count);
-        for (size_type i = 0; i < count; ++i) {
-            _allocator.construct(_arr + i, *(first++));
+            tmp++;
         }
-        _size = count;
+
+        reserve(count);
+        insert(begin(), first, last);
+    }
+
+    void assign (size_type count, const value_type& val) {
+        clear();
+        reserve(count);
+        insert(begin(), count, val);
     }
 
     allocator_type get_allocator() const { return (_allocator); }
@@ -201,7 +203,16 @@ public:
                 _allocator.destroy(_arr + i);
         }
         else {
-            reserve(count);
+            if (count > _capacity) {
+                if (_capacity == 0)
+                    reserve(count);
+                else {
+                    if (_size * 2 >= count)
+                        reserve(_size * 2);
+                    else
+                        reserve(count);
+                }
+            }
             for (size_type i = size(); i < count; i++) {
                 push_back(value);
             }
@@ -231,50 +242,121 @@ public:
         return (iterator(_arr + i));
     }
 
-    void insert( iterator pos, size_type count, const T& value ) { //OK?
-        if (count == 0)
-            return ;
+    // void insert( iterator pos, size_type count, const T& value ) { //OK?
+    //     if (count == 0)
+    //         return ;
+    //     size_t newCapacity;
+    //     if (count + _size > _capacity)
+    //         newCapacity = count + _size;
+    //     else
+    //         newCapacity = 0;
+    //     if (pos == end()) {
+    //         for (size_t i = 0; i < count; i++)
+    //             push_back(value);
+    //         return ;
+    //     }
+    //     vector<T, Allocator> tmp(pos, end());
+    //     iterator it = tmp.begin();
+    //     iterator ite = tmp.end();
+    //     erase(pos, end());
+    //     for (size_type i = 0; i < count; i++) {
+    //         push_back(value);
+    //     }
+    //     for (; it != ite; it++) {
+    //         push_back(*it);
+    //     }
+    //     if (newCapacity)
+    //         _capacity = newCapacity;
+    //     // erase(tmp.begin(), tmp.end());
+    // }
 
-        if (pos == end()) {
-            for (size_t i = 0; i < count; i++)
-                push_back(value);
-            return ;
+    void insert (iterator position, size_type n, const value_type& val) {
+        // if (n ==0)
+        //     return ;
+        if (n != 0) {
+        size_type index = position - begin();
+
+        if (_size + n > _capacity) {
+            if (_capacity == 0)
+                reserve(n);
+            else {
+                if (_size * 2 >= _size + n)
+                    reserve(_size * 2);
+                else
+                    reserve(_size + n);
+            }
         }
-        vector<T, Allocator> tmp(pos, end());
-        iterator it = tmp.begin();
-        iterator ite = tmp.end();
-        erase(pos, end());
-        for (size_type i = 0; i < count; i++)
-            push_back(value);
-        for (; it != ite; it++) {
-            push_back(*it);
+
+        for (size_type i = n + _size - 1; i > index + n - 1; i--) {
+            _allocator.construct(&_arr[i], _arr[i - n]);
+            _allocator.destroy(&_arr[i - n]);
         }
-        // erase(tmp.begin(), tmp.end());
+        for (size_type i = index; i < index + n; i++) {
+            _allocator.construct(&_arr[i], val);
+            _size++;
+        }
+        }
     }
 
-    template <class InputIt>
-    void insert (iterator pos, InputIt first, InputIt last,
-                typename ft::enable_if<!ft::is_integral<InputIt>::value,
-                                     InputIt>::type* = NULL) {
-        if (pos == end()) {
-            for (; first != last; first++)
-                push_back(*first);
-        }
-        vector<T, Allocator> tmp(pos, end());
+    // template <class InputIt>
+    // void insert (iterator pos, InputIt first, InputIt last,
+    //             typename ft::enable_if<!ft::is_integral<InputIt>::value,
+    //                                  InputIt>::type* = NULL) {
+    //     if (pos == end()) {
+    //         for (; first != last; first++)
+    //             push_back(*first);
+    //     }
+    //     vector<T, Allocator> tmp(pos, end());
+    //     size_type count = 0;
+    //     iterator it1 = first;
+    //     for (; it1 != last; it1++)
+    //         count++;
+    //     if (count == 0)
+    //         return ;
+    //     iterator it = tmp.begin();
+    //     iterator ite = tmp.end();
+    //     erase(pos, end());
+    //     for (; first != last; first++) {
+    //         push_back(*first);
+    //     }
+    //     for (; it != ite; it++)
+    //         push_back(*it);
+    // }
+
+
+    template <class InputIterator>
+    void insert (iterator position, InputIterator first, InputIterator last,
+                    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = NULL) {
+        size_type offset = position - begin();
+        InputIterator tmp = first;
         size_type count = 0;
-        iterator it1 = first;
-        for (; it1 != last; it1++)
+
+        while (tmp != last) {
             count++;
-        if (count == 0)
-            return ;
-        iterator it = tmp.begin();
-        iterator ite = tmp.end();
-        erase(pos, end());
-        for (; first != last; first++)
-            push_back(*first);
-        for (; it != ite; it++)
-            push_back(*it);
-    }
+            tmp++;
+        }
+
+        if (_size + count > _capacity) {
+            if (_capacity == 0)
+            reserve(count);
+            else {
+                if (_size * 2 >= _size + count)
+                    reserve(_size * 2);
+                else
+                    reserve(_size + count);
+            }
+        }
+
+        for (size_type i = count + _size - 1; i > offset + count - 1; i--) {
+            _allocator.construct(&_arr[i], _arr[i - count]);
+            _allocator.destroy(&_arr[i - count]);
+        }
+        for (size_type i = offset; i < offset + count; i++) {
+            _allocator.construct(&_arr[i], *first);
+            first++;
+            _size++;
+        }
+    };
 
     iterator erase( iterator pos ) { //OK
         if (pos == end()) {
@@ -296,15 +378,18 @@ public:
         if (first == last)
             return (last);
         
-        vector<T, Allocator> tmp1(first + 1, end());
+        // vector<T, Allocator> tmp1(first + 1, end());
+        vector<T, Allocator> tmp1(first, end());
         vector<T, Allocator> tmp2(last, end());
         iterator it = tmp2.begin();
         iterator ite = tmp2.end();
 
-        for (size_type i = 0; i <= tmp1.size(); i++)
+        for (size_type i = 0; i < tmp1.size(); i++)
             pop_back();
-        for (; it != ite; it++)
-            push_back(*it);
+        if (last != end()) {
+            for (; it != ite; it++)
+                push_back(*it);
+        }
         return (first);
     }
 
@@ -314,7 +399,7 @@ public:
         else {
             if (_capacity == 0)
                 reserve(1);
-        }     
+        }
         _allocator.construct(_arr + _size, value);
         _size++;
     }
@@ -333,6 +418,7 @@ public:
         this->_arr = other._arr;
         this->_size = other._size;
         this->_capacity = other._capacity;
+        // this->_capacity = other._size;
         this->_allocator = other._allocator;
 
         other._arr = tmpArr;
@@ -343,16 +429,6 @@ public:
 
     friend bool operator==( const vector<T,Allocator>& lhs,
                             const vector<T,Allocator>& rhs ) {
-        // size_t i = 0;
-        // if (lhs.size() != rhs.size())
-        //     return (false);
-        // while (i < lhs.size()) {
-        //     if (lhs._arr[i] != rhs._arr[i])
-        //         return false;
-        // }
-        // return true;
-
-
         size_t i = 0, j = 0;
         while (i < lhs.size() && j < rhs.size()) {
             if (lhs._arr[i++] != rhs._arr[j++]) {
